@@ -25,7 +25,6 @@ services:
       - rps_rmq_data:/var/lib/rabbitmq
 
   subtraction:
-    container_name: subtraction-service
     build: 
         dockerfile: SubtractService/Dockerfile
         context: .
@@ -33,10 +32,10 @@ services:
         - rmq
         - zipkin
         - seq
-    replicas: 3
+    deploy:
+      replicas: 3
 
   addition:
-    container_name: addition-service
     build: 
         dockerfile: AdditionService/Dockerfile
         context: .
@@ -44,7 +43,8 @@ services:
         - rmq
         - zipkin
         - seq
-    replicas: 3
+    deploy:
+      replicas: 3
 
 volumes:
   rps_seq_data:
