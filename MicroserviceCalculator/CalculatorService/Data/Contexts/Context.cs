@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
-namespace Data
+namespace CalculatorService.Data.Contexts
 {
     public class Context : DbContext
     {
@@ -34,6 +34,6 @@ namespace Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         => options.UseSqlite($"Data Source={DbPath}");
-        
+
     }
 }

@@ -2,12 +2,19 @@
 
 namespace CalculatorService.Entities
 {
+
     public class Result
     {
-        private int Id { get; set; }
-        private double Value { get; set; }
-        private CalculationType Type { get; set; }
-        private string Calculation { get; set; }
+        public Result(double value, CalculationType type, string calculation)
+        {
+            Value = value;
+            Type = type;
+            Calculation = calculation;
+        }
 
+        public int Id { get; set; }
+        public double Value { get; set; }
+        public CalculationType Type { get; set; }
+        public string Calculation { get; set; } = "";
     }
 }
