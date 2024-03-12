@@ -15,7 +15,8 @@ namespace SubtractService.Monitoring
             return logger
                 .ForContext("MemberName", memberName)
                 .ForContext("FilePath", sourceFilePath)
-                .ForContext("LineNumber", sourceLineNumber);
+                .ForContext("LineNumber", sourceLineNumber)
+                .ForContext("MachineName", Environment.MachineName);
         }
     }
 }
