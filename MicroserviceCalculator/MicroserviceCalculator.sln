@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34525.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculatorService", "CalculatorService\CalculatorService.csproj", "{A0BD5570-0DA6-44CA-887A-933AC17FA3A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculatorService", "CalculatorService\CalculatorService.csproj", "{A0BD5570-0DA6-44CA-887A-933AC17FA3A5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdditionService", "AdditionService\AdditionService.csproj", "{3CE281B2-5BC6-436F-8840-D2F1E935F8FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdditionService", "AdditionService\AdditionService.csproj", "{3CE281B2-5BC6-436F-8840-D2F1E935F8FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SubtractService", "SubtractService\SubtractService.csproj", "{6FC7FC7A-1D00-4CCC-A413-1EC049425F88}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SubtractService", "SubtractService\SubtractService.csproj", "{6FC7FC7A-1D00-4CCC-A413-1EC049425F88}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{7FA8B78D-B187-4E7A-83CF-60907E1FDCDD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorClient", "BlazorClient\BlazorClient.csproj", "{929205F4-0226-4E55-930E-155C1D22344C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{6FC7FC7A-1D00-4CCC-A413-1EC049425F88}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6FC7FC7A-1D00-4CCC-A413-1EC049425F88}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6FC7FC7A-1D00-4CCC-A413-1EC049425F88}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7FA8B78D-B187-4E7A-83CF-60907E1FDCDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7FA8B78D-B187-4E7A-83CF-60907E1FDCDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7FA8B78D-B187-4E7A-83CF-60907E1FDCDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7FA8B78D-B187-4E7A-83CF-60907E1FDCDD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{929205F4-0226-4E55-930E-155C1D22344C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{929205F4-0226-4E55-930E-155C1D22344C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{929205F4-0226-4E55-930E-155C1D22344C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{929205F4-0226-4E55-930E-155C1D22344C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
