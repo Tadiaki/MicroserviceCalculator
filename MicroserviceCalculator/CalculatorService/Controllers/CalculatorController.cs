@@ -9,30 +9,43 @@ using CalculatorService.Services;
 using CalculatorService.Enums;
 using Serilog;
 using CalculatorService.Helpers;
+using CalculatorService.Entities;
+using CalculatorService.Communications;
 
 namespace CalculatorService.Controllers
 {
     public class CalculatorController : Controller
     {
         private readonly Calculator _cs;
+        private ResultService _resultService;
+
+        public CalculatorController(Calculator cs, ResultService resultService)
+        {
+            _cs = cs;
+            _resultService = resultService;
+        }
 
         // POST: CalculatorController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(CalculationRequestDTO calcReqDTO)
+        public async Task<ActionResult> CreateCalculationAsync(CalculationRequestDTO calcReqDTO)
         {
             try
             {
                 using var activity = Monitoring.ActivitySource.StartActivity();
-                var response = _cs.CreateCalculation(calcReqDTO);
 
+                await _cs.SendCalculationRequestAsync(calcReqDTO);
 
+                var result = _resultService.GetResult();
+                
 
-                return RedirectToAction(nameof(Index));
+                return Ok(result);
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                Monitoring.Log.Here().Error(ex, "An error occurred while creating the calculation");
+                Console.WriteLine(ex.ToString());
+                return Content("An error occurred while creating the calculation. Please try again later.");
             }
         }
 

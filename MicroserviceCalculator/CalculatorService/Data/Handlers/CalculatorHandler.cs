@@ -8,6 +8,7 @@ namespace CalculatorService.Data.Handlers
 {
     public class CalculatorHandler
     {
+        private List<Result> results = new List<Result>();
         internal async Task CreateCalculationAsync(Result result)
         {
             using (var context = new Context())
