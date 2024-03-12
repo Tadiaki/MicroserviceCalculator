@@ -37,8 +37,9 @@ namespace CalculatorService.Controllers
                 await _cs.SendCalculationRequestAsync(calcReqDTO);
 
                 var result = _resultService.GetResult();
-                
 
+                // gem result i db
+                
                 return Ok(result);
             }
             catch (Exception ex)

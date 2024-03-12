@@ -7,11 +7,12 @@ namespace CalculatorService.Services
     public class ResultService
     {
         private List<Result> results = new List<Result>();
+
         public void HandleCalculationResult(CalculationResponseDTO e)
         {
             var str = e.CalculationType == CalculationType.Addition ? " + " : " - ";
             var calculation = "" + e.NumberOne + str + e.NumberTwo;
-            var result = new Result(e.CalculationResult, e.CalculationType, str);
+            var result = new Result(e.CalculationResult, e.CalculationType, calculation);
             results.Add(result);
         }
 
