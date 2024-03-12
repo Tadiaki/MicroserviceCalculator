@@ -18,7 +18,8 @@ namespace AdditionService.Communication
                 try
                 {
                     var bus = ConnectionHelper.GetRMQConnection();
-                    var subscription = await bus.PubSub.SubscribeAsync<CalculationRequestDTO>("addition", e =>
+                    MonitoringService.Log.Here().Information("Got RMQConnection");
+                    var subscription = bus.PubSub.SubscribeAsync<CalculationRequestDTO>("addition", e =>
                     {
                         try
                         {
@@ -60,7 +61,7 @@ namespace AdditionService.Communication
                     await Task.Delay(1000); // Wait before attempting to reconnect
                 }
             }
+            MonitoringService.Log.Here().Information("Connection Established. Subscription successful!");
         }
-
     }
 }

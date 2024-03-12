@@ -17,10 +17,9 @@ namespace SubtractService.Communication
             {
                 try
                 {
-                    MonitoringService.Log.Here().Information("Entered first try block");
                     var bus = ConnectionHelper.GetRMQConnection();
                     MonitoringService.Log.Here().Information("Got RMQConnection");
-                    var subscription = await bus.PubSub.SubscribeAsync<CalculationRequestDTO>("subtraction", e =>
+                    var subscription = bus.PubSub.SubscribeAsync<CalculationRequestDTO>("subtraction", e =>
                     {
                         try
                         {
@@ -32,7 +31,7 @@ namespace SubtractService.Communication
                                 return new List<string>(new[] { r.Headers.ContainsKey(key) ? r.Headers[key].ToString() : String.Empty }!);
                             });
                             Baggage.Current = parentContext.Baggage;
-
+                           
                             var response = new CalculationResponseDTO();
                             response.CalculationResult = e.NumberOne - e.NumberTwo;
                             response.CalculationType = e.CalculationType;
@@ -62,6 +61,7 @@ namespace SubtractService.Communication
                     await Task.Delay(1000); // Wait before attempting to reconnect
                 }
             }
+            MonitoringService.Log.Here().Information("Connection Established. Subscription successful!");
         }
 
     }
