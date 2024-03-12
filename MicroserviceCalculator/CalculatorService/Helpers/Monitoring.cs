@@ -22,7 +22,10 @@ namespace CalculatorService.Helpers
             var version = "1.0.0";
 
             _tracerProvider = Sdk.CreateTracerProviderBuilder()
-                .AddZipkinExporter()
+                .AddZipkinExporter(options =>
+                {
+                    options.Endpoint = new Uri("http://zipkin:9411/api/v2/spans"); // Adjust the URL and port accordingly
+                })
                 .AddConsoleExporter()
                 .AddSource(ActivitySource.Name)
                 .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(serviceName: serviceName, serviceVersion: version))
@@ -32,7 +35,7 @@ namespace CalculatorService.Helpers
             Serilog.Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .Enrich.WithSpan()
-                .WriteTo.Seq("http://localhost:5341")
+                .WriteTo.Seq("http://seq:5341")
                 .WriteTo.Console()
                 .CreateLogger();
         }
