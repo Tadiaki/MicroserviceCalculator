@@ -4,7 +4,7 @@ using ILogger = Serilog.ILogger;
 
 namespace SubtractService.Monitoring
 {
-    public static class LoggerExtension
+    public static class LoggerExtensions
     {
         public static ILogger Here(this ILogger logger,
             [CallerMemberName] string memberName = "",

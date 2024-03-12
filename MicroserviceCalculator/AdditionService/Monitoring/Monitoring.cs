@@ -5,15 +5,17 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Serilog;
 using Serilog.Enrichers.Span;
+using ILogger = Serilog.ILogger;
 
 namespace AdditionService.Monitoring
 {
-    public class Monitoring
+    public class MonitoringService
     {
         public static readonly ActivitySource ActivitySource = new("RPS", "1.0.0");
         private static TracerProvider _tracerProvider;
+        public static ILogger Log => Serilog.Log.Logger;
 
-        static Monitoring()
+        static MonitoringService()
         {
             // Configure tracing
             var serviceName = Assembly.GetExecutingAssembly().GetName().Name;
@@ -27,7 +29,7 @@ namespace AdditionService.Monitoring
                 .Build();
 
             // Configure logging
-            Log.Logger = new LoggerConfiguration()
+            Serilog.Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .Enrich.WithSpan()
                 .WriteTo.Seq("http://localhost:5341")

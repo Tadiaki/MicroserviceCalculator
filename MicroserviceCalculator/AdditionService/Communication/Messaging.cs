@@ -3,6 +3,7 @@ using OpenTelemetry.Context.Propagation;
 using OpenTelemetry;
 using System.Diagnostics;
 using AdditionService.DTO_s;
+using AdditionService.Monitoring;
 
 namespace AdditionService.Communication
 {
@@ -14,33 +15,50 @@ namespace AdditionService.Communication
 
             while (!connectionEstablished)
             {
-                var bus = ConnectionHelper.GetRMQConnection();
-                var subscriptionResult = bus.PubSub.SubscribeAsync<CalculationRequestDTO>("addition", e =>
+                try
                 {
-
-                    var propagator = new TraceContextPropagator();
-                    var parentContext = propagator.Extract(default, e, (r, key) =>
+                    var bus = ConnectionHelper.GetRMQConnection();
+                    var subscriptionResult = bus.PubSub.SubscribeAsync<CalculationRequestDTO>("addition", e =>
                     {
-                        return new List<string>(new[] { r.Headers.ContainsKey(key) ? r.Headers[key].ToString() : String.Empty }!);
-                    });
-                    Baggage.Current = parentContext.Baggage;
+                        try
+                        {
+                            MonitoringService.Log.Here().Information("Received request for addition of {NumberOne} and {NumberTwo}", e.NumberOne, e.NumberTwo);
+                            var propagator = new TraceContextPropagator();
+                            var parentContext = propagator.Extract(default, e, (r, key) =>
+                            {
+                                return new List<string>(new[] { r.Headers.ContainsKey(key) ? r.Headers[key].ToString() : String.Empty }!);
+                            });
+                            Baggage.Current = parentContext.Baggage;
 
-                    var response = new CalculationResponseDTO();
-                    response.CalculationResult = e.NumberOne + e.NumberTwo;
-                    response.CalculationType = e.CalculationType;
+                            var response = new CalculationResponseDTO();
+                            response.CalculationResult = e.NumberOne + e.NumberTwo;
+                            response.CalculationType = e.CalculationType;
+                            MonitoringService.Log.Here().Information("calculated result for addition of {NumberOne} and {NumberTwo}: result {CalculationResult}", e.NumberOne, e.NumberTwo, response.CalculationResult);
 
-                    using (var activity = Monitoring.Monitoring.ActivitySource.StartActivity("Received task", ActivityKind.Consumer, parentContext.ActivityContext))
-                    {
-                        var activityContext = activity?.Context ?? Activity.Current?.Context ?? default;
-                        var propagationContext = new PropagationContext(activityContext, Baggage.Current);
-                        propagator.Inject(propagationContext, response.Headers, (headers, key, value) => headers.Add(key, value));
+                            using (var activity = MonitoringService.ActivitySource.StartActivity("Received task", ActivityKind.Consumer, parentContext.ActivityContext))
+                            {
+                                var activityContext = activity?.Context ?? Activity.Current?.Context ?? default;
+                                var propagationContext = new PropagationContext(activityContext, Baggage.Current);
+                                propagator.Inject(propagationContext, response.Headers, (headers, key, value) => headers.Add(key, value));
+                                string topic = "additionResult";
+                                MonitoringService.Log.Here().Information("publishing result to topic {topic} {response}", topic, response);
+                                bus.PubSub.PublishAsync(response, x => x.WithTopic(topic));
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            MonitoringService.Log.Here().Error($"An error occurred while processing addition request: {ex.Message}");
+                        }
+                    }).AsTask();
 
-                        bus.PubSub.PublishAsync(response);
-                    }
-                }).AsTask();
-
-                await subscriptionResult.WaitAsync(CancellationToken.None);
-                connectionEstablished = subscriptionResult.Status == TaskStatus.RanToCompletion;
+                    await subscriptionResult.WaitAsync(CancellationToken.None);
+                    connectionEstablished = subscriptionResult.Status == TaskStatus.RanToCompletion;
+                }
+                catch (Exception ex)
+                {
+                    MonitoringService.Log.Here().Error($"An error occurred while establishing subscription: {ex.Message}");
+                    Thread.Sleep(1000); // Wait before attempting to reconnect
+                }
                 if (!connectionEstablished) Thread.Sleep(1000);
             }
         }
