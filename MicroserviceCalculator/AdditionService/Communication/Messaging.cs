@@ -18,11 +18,12 @@ namespace AdditionService.Communication
                 try
                 {
                     var bus = ConnectionHelper.GetRMQConnection();
-                    var subscriptionResult = bus.PubSub.SubscribeAsync<CalculationRequestDTO>("addition", e =>
+                    var subscription = await bus.PubSub.SubscribeAsync<CalculationRequestDTO>("addition", e =>
                     {
                         try
                         {
                             MonitoringService.Log.Here().Information("Received request for addition of {NumberOne} and {NumberTwo}", e.NumberOne, e.NumberTwo);
+
                             var propagator = new TraceContextPropagator();
                             var parentContext = propagator.Extract(default, e, (r, key) =>
                             {
@@ -31,9 +32,9 @@ namespace AdditionService.Communication
                             Baggage.Current = parentContext.Baggage;
 
                             var response = new CalculationResponseDTO();
-                            response.CalculationResult = e.NumberOne + e.NumberTwo;
+                            response.CalculationResult = e.NumberOne - e.NumberTwo;
                             response.CalculationType = e.CalculationType;
-                            MonitoringService.Log.Here().Information("calculated result for addition of {NumberOne} and {NumberTwo}: result {CalculationResult}", e.NumberOne, e.NumberTwo, response.CalculationResult);
+                            MonitoringService.Log.Here().Information("calculated result for addition of {NumberOne} and {NumberTwo}: result {response}", e.NumberOne, e.NumberTwo, response.CalculationResult);
 
                             using (var activity = MonitoringService.ActivitySource.StartActivity("Received task", ActivityKind.Consumer, parentContext.ActivityContext))
                             {
@@ -49,18 +50,17 @@ namespace AdditionService.Communication
                         {
                             MonitoringService.Log.Here().Error($"An error occurred while processing addition request: {ex.Message}");
                         }
-                    }).AsTask();
+                    });
 
-                    await subscriptionResult.WaitAsync(CancellationToken.None);
-                    connectionEstablished = subscriptionResult.Status == TaskStatus.RanToCompletion;
+                    connectionEstablished = true; // Subscription successful
                 }
                 catch (Exception ex)
                 {
                     MonitoringService.Log.Here().Error($"An error occurred while establishing subscription: {ex.Message}");
-                    Thread.Sleep(1000); // Wait before attempting to reconnect
+                    await Task.Delay(1000); // Wait before attempting to reconnect
                 }
-                if (!connectionEstablished) Thread.Sleep(1000);
             }
         }
+
     }
 }
