@@ -23,15 +23,32 @@ services:
       - 15672:15672
     volumes:
       - rps_rmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: rabbitmq-diagnostics check_port_connectivity
+      interval: 1s
+      timeout: 5s
+      retries: 30
+
+  client:
+    build: 
+        dockerfile: BlazorClient/Dockerfile
+        context: .
+    ports:
+      - 8080:8080
+      - 8081:8081
+    depends_on:
+      - zipkin
+      - seq
+      - rmq
 
   subtraction:
     build: 
         dockerfile: SubtractService/Dockerfile
         context: .
     depends_on:
-        - rmq
-        - zipkin
-        - seq
+      - zipkin
+      - seq
+      - rmq
     deploy:
       replicas: 3
 
@@ -40,9 +57,9 @@ services:
         dockerfile: AdditionService/Dockerfile
         context: .
     depends_on:
-        - rmq
-        - zipkin
-        - seq
+      - zipkin
+      - seq
+      - rmq
     deploy:
       replicas: 3
 

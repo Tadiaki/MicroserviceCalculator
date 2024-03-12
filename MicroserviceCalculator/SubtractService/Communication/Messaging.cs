@@ -17,51 +17,52 @@ namespace SubtractService.Communication
             {
                 try
                 {
+                    MonitoringService.Log.Here().Information("Entered first try block");
                     var bus = ConnectionHelper.GetRMQConnection();
-                    var subscriptionResult = bus.PubSub.SubscribeAsync<CalculationRequestDTO>("subtraction", e =>
+                    MonitoringService.Log.Here().Information("Got RMQConnection");
+                    var subscription = await bus.PubSub.SubscribeAsync<CalculationRequestDTO>("subtraction", e =>
                     {
-                    try
-                    {
-                        MonitoringService.Log.Here().Information("Received request for subtraction of {NumberOne} and {NumberTwo}", e.NumberOne, e.NumberTwo);
-
-                        var propagator = new TraceContextPropagator();
-                        var parentContext = propagator.Extract(default, e, (r, key) =>
+                        try
                         {
-                            return new List<string>(new[] { r.Headers.ContainsKey(key) ? r.Headers[key].ToString() : String.Empty }!);
-                        });
-                        Baggage.Current = parentContext.Baggage;
+                            MonitoringService.Log.Here().Information("Received request for subtraction of {NumberOne} and {NumberTwo}", e.NumberOne, e.NumberTwo);
 
-                        var response = new CalculationResponseDTO();
-                        response.CalculationResult = e.NumberOne - e.NumberTwo;
-                        response.CalculationType = e.CalculationType;
-                        MonitoringService.Log.Here().Information("calculated result for subtraction of {NumberOne} and {NumberTwo}: result {response}", e.NumberOne, e.NumberTwo, response.CalculationResult);
+                            var propagator = new TraceContextPropagator();
+                            var parentContext = propagator.Extract(default, e, (r, key) =>
+                            {
+                                return new List<string>(new[] { r.Headers.ContainsKey(key) ? r.Headers[key].ToString() : String.Empty }!);
+                            });
+                            Baggage.Current = parentContext.Baggage;
 
-                        using (var activity = MonitoringService.ActivitySource.StartActivity("Received task", ActivityKind.Consumer, parentContext.ActivityContext))
-                        {
-                            var activityContext = activity?.Context ?? Activity.Current?.Context ?? default;
-                            var propagationContext = new PropagationContext(activityContext, Baggage.Current);
-                            propagator.Inject(propagationContext, response.Headers, (headers, key, value) => headers.Add(key, value));
-                            string topic = "subtractionResult";
-                            MonitoringService.Log.Here().Information("publishing result to topic {topic} {response}", topic, response);
-                            bus.PubSub.PublishAsync(response, x => x.WithTopic(topic));
+                            var response = new CalculationResponseDTO();
+                            response.CalculationResult = e.NumberOne - e.NumberTwo;
+                            response.CalculationType = e.CalculationType;
+                            MonitoringService.Log.Here().Information("calculated result for subtraction of {NumberOne} and {NumberTwo}: result {response}", e.NumberOne, e.NumberTwo, response.CalculationResult);
+
+                            using (var activity = MonitoringService.ActivitySource.StartActivity("Received task", ActivityKind.Consumer, parentContext.ActivityContext))
+                            {
+                                var activityContext = activity?.Context ?? Activity.Current?.Context ?? default;
+                                var propagationContext = new PropagationContext(activityContext, Baggage.Current);
+                                propagator.Inject(propagationContext, response.Headers, (headers, key, value) => headers.Add(key, value));
+                                string topic = "subtractionResult";
+                                MonitoringService.Log.Here().Information("publishing result to topic {topic} {response}", topic, response);
+                                bus.PubSub.PublishAsync(response, x => x.WithTopic(topic));
+                            }
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        MonitoringService.Log.Here().Error($"An error occurred while processing addition request: {ex.Message}");
-                    }
-                }).AsTask();
+                        catch (Exception ex)
+                        {
+                            MonitoringService.Log.Here().Error($"An error occurred while processing subtraction request: {ex.Message}");
+                        }
+                    });
 
-                    await subscriptionResult.WaitAsync(CancellationToken.None);
-                    connectionEstablished = subscriptionResult.Status == TaskStatus.RanToCompletion;
+                    connectionEstablished = true; // Subscription successful
                 }
                 catch (Exception ex)
                 {
                     MonitoringService.Log.Here().Error($"An error occurred while establishing subscription: {ex.Message}");
-                    Thread.Sleep(1000); // Wait before attempting to reconnect
+                    await Task.Delay(1000); // Wait before attempting to reconnect
                 }
-                if (!connectionEstablished) Thread.Sleep(1000);
             }
         }
+
     }
 }
