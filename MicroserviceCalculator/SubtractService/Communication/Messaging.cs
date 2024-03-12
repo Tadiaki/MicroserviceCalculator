@@ -15,7 +15,7 @@ namespace SubtractService.Communication
             while (!connectionEstablished)
             {
                 var bus = ConnectionHelper.GetRMQConnection();
-                var subscriptionResult = bus.PubSub.SubscribeAsync<CalculationRequestDTO>("addition", e =>
+                var subscriptionResult = bus.PubSub.SubscribeAsync<CalculationRequestDTO>("subtraction", e =>
                 {
                     var propagator = new TraceContextPropagator();
                     var parentContext = propagator.Extract(default, e, (r, key) =>
