@@ -12,6 +12,7 @@ namespace CalculatorService.Services
 
         public void HandleCalculationResult(CalculationResponseDTO e)
         {
+            Console.WriteLine("I received a result");
             var str = e.CalculationType == CalculationType.Addition ? " + " : " - ";
             var calculation = "" + e.NumberOne + str + e.NumberTwo;
             var result = new Result(null, e.CalculationResult, e.CalculationType, calculation, e.NumberOne, e.NumberTwo);
@@ -33,7 +34,7 @@ namespace CalculatorService.Services
                 results.Remove(matchingResult);
                 return matchingResult;
             }
-             return null; 
+            return null; 
              
         }
     }

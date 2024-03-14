@@ -35,6 +35,8 @@ namespace SubtractService.Communication
                             var response = new CalculationResponseDTO();
                             response.CalculationResult = e.NumberOne - e.NumberTwo;
                             response.CalculationType = e.CalculationType;
+                            response.NumberOne = e.NumberOne;
+                            response.NumberTwo = e.NumberTwo;
                             MonitoringService.Log.Here().Information("calculated result for subtraction of {NumberOne} and {NumberTwo}: result {response}", e.NumberOne, e.NumberTwo, response.CalculationResult);
 
                             using (var activity = MonitoringService.ActivitySource.StartActivity("Received task", ActivityKind.Consumer, parentContext.ActivityContext))

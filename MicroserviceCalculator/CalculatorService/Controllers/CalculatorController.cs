@@ -28,10 +28,13 @@ namespace CalculatorService.Controllers
         {
             try
             {
+                Console.WriteLine(calcReqDTO.NumberOne);
+                Console.WriteLine(calcReqDTO.NumberTwo);
+                Console.WriteLine(calcReqDTO.CalculationType);
                 using var activity = Monitoring.ActivitySource.StartActivity();
 
                 await _cs.SendCalculationRequestAsync(calcReqDTO);
-                Monitoring.Log.Here().Error("I came out of the senccalcrequest method");
+
                 var timeoutTask = Task.Delay(20000); // 5 seconds timeout
                 
 
@@ -39,7 +42,6 @@ namespace CalculatorService.Controllers
                 Monitoring.Log.Here().Error("Going into loop");
                 while (!timeoutTask.IsCompleted && result == null)
                 {
-                    Monitoring.Log.Here().Error("Getting result");
                     result = _resultService.GetResult(calcReqDTO.NumberOne, calcReqDTO.NumberTwo,
                         calcReqDTO.CalculationType);
                     Thread.Sleep(1000);

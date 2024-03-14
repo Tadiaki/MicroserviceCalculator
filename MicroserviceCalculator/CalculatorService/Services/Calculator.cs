@@ -22,7 +22,7 @@ namespace CalculatorService.Services
                 Monitoring.Log.Here().Error("Created bus");
 
                 // pub
-                var message = (calcReqDTO);
+                var message = calcReqDTO;
 
                 var activityContext = activity?.Context ?? Activity.Current?.Context ?? default;
                 var propagationContext = new PropagationContext(activityContext, Baggage.Current);
@@ -41,11 +41,9 @@ namespace CalculatorService.Services
                     topic = "subtraction";
                 }
                 Monitoring.Log.Here().Error("Sending message");
-                await bus.PubSub.PublishAsync(message, typeof(CalculationRequestDTO), topic);
+                await bus.PubSub.PublishAsync(message, typeof(CalculationRequestDTO), x => x.WithTopic(topic));
                 Monitoring.Log.Here().Error("Message was send");
             }
         }
-
-
     }
 }

@@ -16,7 +16,7 @@ namespace CalculatorService.Communications
 
             var topic = "subtractionResult";
 
-            var subscription = _bus.PubSub.SubscribeAsync<CalculationResponseDTO>("CalcService-"+Environment.MachineName, async (e, cancellationToken) =>
+            _bus.PubSub.SubscribeAsync<CalculationResponseDTO>("CalcService-"+Environment.MachineName, e =>
             {
                 if (e != null)
                 {
@@ -36,7 +36,7 @@ namespace CalculatorService.Communications
 
             var topic = "additionResult";
 
-            var subscription = _bus.PubSub.SubscribeAsync<CalculationResponseDTO>("CalcService-"+Environment.MachineName, async (e, cancellationToken) =>
+            _bus.PubSub.SubscribeAsync<CalculationResponseDTO>("CalcService-"+Environment.MachineName, e =>
             {
                 if (e != null)
                 {
