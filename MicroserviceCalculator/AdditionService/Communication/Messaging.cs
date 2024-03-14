@@ -21,7 +21,7 @@ namespace AdditionService.Communication
                     
                     MonitoringService.Log.Here().Information("Got RMQConnection");
 
-                    var subscription = bus.PubSub.SubscribeAsync<CalculationRequestDTO>("AddService-"+Environment.MachineName, e =>
+                    bus.PubSub.SubscribeAsync<CalculationRequestDTO>("AddService-"+Environment.MachineName, e =>
                     {
                         try
                         {
