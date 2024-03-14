@@ -1,0 +1,68 @@
+version: "3.9"
+
+services:
+  seq:
+    image: datalust/seq
+    ports:
+      - 5341:5341
+      - 5342:80
+    volumes:
+      - rps_seq_data:/data
+    environment:
+      - ACCEPT_EULA=Y
+
+  zipkin:
+    image: openzipkin/zipkin
+    ports:
+      - 9411:9411
+
+  rmq:
+    image: rabbitmq:management
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rps_rmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: rabbitmq-diagnostics check_port_connectivity
+      interval: 1s
+      timeout: 5s
+      retries: 30
+
+  client:
+    build: 
+        dockerfile: BlazorClient/Dockerfile
+        context: .
+    ports:
+      - 8080:8080
+      - 8081:8081
+    depends_on:
+      - zipkin
+      - seq
+      - rmq
+
+  subtraction:
+    build: 
+        dockerfile: SubtractService/Dockerfile
+        context: .
+    depends_on:
+      - zipkin
+      - seq
+      - rmq
+    deploy:
+      replicas: 3
+
+  addition:
+    build: 
+        dockerfile: AdditionService/Dockerfile
+        context: .
+    depends_on:
+      - zipkin
+      - seq
+      - rmq
+    deploy:
+      replicas: 3
+
+volumes:
+  rps_seq_data:
+  rps_rmq_data:
