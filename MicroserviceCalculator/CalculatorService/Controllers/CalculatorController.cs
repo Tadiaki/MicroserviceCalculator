@@ -30,7 +30,6 @@ namespace CalculatorService.Controllers
 
         // POST: CalculatorController/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<ActionResult> CreateCalculationAsync(CalculationRequestDTO calcReqDTO)
         {
             try
