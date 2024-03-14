@@ -29,8 +29,7 @@ namespace CalculatorService.Controllers
         }
 
         // POST: CalculatorController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost("CreateCalculation")]
         public async Task<ActionResult> CreateCalculationAsync(CalculationRequestDTO calcReqDTO)
         {
             try
@@ -66,7 +65,7 @@ namespace CalculatorService.Controllers
         }
 
         // GET: CalculatorController/GetHistory
-        [HttpGet]
+        [HttpGet("GetHistory")]
         public ActionResult GetHistory()
         {
             try
