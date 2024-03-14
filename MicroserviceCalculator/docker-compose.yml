@@ -40,6 +40,8 @@ services:
       - zipkin
       - seq
       - rmq
+    networks:
+      - CalcNetwork
 
   calculator:
     build: 
@@ -52,6 +54,8 @@ services:
       - zipkin
       - seq
       - rmq
+    networks:
+      - CalcNetwork
 
   subtraction:
     build: 
@@ -78,3 +82,8 @@ services:
 volumes:
   rps_seq_data:
   rps_rmq_data:
+
+networks:
+  CalcNetwork:
+    driver: bridge
+    external: true

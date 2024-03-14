@@ -18,5 +18,12 @@ namespace CalculatorService.Data.Contexts
             // Always use the default location for the SQLite database
             options.UseSqlite($"Data Source={DefaultDbPath}");
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Result>()
+                .Property(p => p.Id)
+                .ValueGeneratedOnAdd();
+        }
     }
 }
