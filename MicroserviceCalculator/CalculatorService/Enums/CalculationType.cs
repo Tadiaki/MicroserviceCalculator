@@ -1,6 +1,6 @@
 ﻿namespace CalculatorService.Enums
 {
-    enum CalculationType
+    public enum CalculationType
     {
         Addition,
         Subtraction,
