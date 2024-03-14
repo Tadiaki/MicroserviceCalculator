@@ -5,7 +5,7 @@ using CalculatorService.Services.interfaces;
 
 namespace CalculatorService.Services
 {
-    public class ResultService :IResultService
+    public class ResultService : IResultService
     {
         private List<Result> results = new List<Result>();
 
@@ -16,29 +16,27 @@ namespace CalculatorService.Services
             var calculation = "" + e.NumberOne + str + e.NumberTwo;
             var result = new Result(null, e.CalculationResult, e.CalculationType, calculation, e.NumberOne, e.NumberTwo);
 
-                results.Add(result);
-            
+            results.Add(result);
+
         }
 
         public Result GetResult(double numberOne, double numberTwo, CalculationType calculationType)
         {
 
-                var matchingResult = results.FirstOrDefault(r =>
-            r.NumberOne == numberOne &&
-            r.NumberTwo == numberTwo &&
-            r.Type == calculationType);
+            var matchingResult = results.FirstOrDefault(r =>
+                r.NumberOne == numberOne &&
+                r.NumberTwo == numberTwo &&
+                r.Type == calculationType);
 
             if (matchingResult != null)
             {
                 results.Remove(matchingResult);
                 return matchingResult;
             }
-            else { 
-                Thread.Sleep(1000);
-             return null; }
-            
-
-
+            else
+            {
+                return null;
+            }
         }
     }
 }
