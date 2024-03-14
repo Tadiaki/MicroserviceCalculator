@@ -39,6 +39,7 @@ namespace CalculatorService.Controllers
                 Monitoring.Log.Here().Error("Going into loop");
                 while (!timeoutTask.IsCompleted && result == null)
                 {
+                    Thread.Sleep(1000);
                     result = _resultService.GetResult(calcReqDTO.NumberOne, calcReqDTO.NumberTwo, calcReqDTO.CalculationType);
                 }
                 Monitoring.Log.Here().Error("We escaped the 5 sec while loop");
