@@ -31,19 +31,18 @@
         calcdto.Type = CalculationType.Addition;
 
         var client = new HttpClient();
-        var requestmessage = new HttpRequestMessage(HttpMethod.Post, "localhost:3000/create");
+        var requestmessage = new HttpRequestMessage(HttpMethod.Post, "calculator:9090/create");
         requestmessage.Content = new StringContent(JsonSerializer.Serialize(calcdto));
         var response = await client.SendAsync(requestmessage);
         var respContent = await response.Content.ReadAsStringAsync();
-        if (response.IsSuccessStatusCode)
-        {
+        try{
             
             var result = JsonSerializer.Deserialize<Result>(respContent);
             results.Add(result);
         }
-        else
+        catch(Exception ex)
         {            
-            Console.WriteLine($"LOG DIS = {respContent}");
+            Console.WriteLine($"LOG DIS = {ex.Message}");
         }
     }
 
@@ -55,7 +54,7 @@
         calcdto.Type = CalculationType.Subtraction;
 
         var client = new HttpClient();
-        var requestmessage = new HttpRequestMessage(HttpMethod.Post, "localhost:3000/create");
+        var requestmessage = new HttpRequestMessage(HttpMethod.Post, "calculator:9090/create");
         requestmessage.Content = new StringContent(JsonSerializer.Serialize(calcdto));
         var response = await client.SendAsync(requestmessage);
         var respContent = await response.Content.ReadAsStringAsync();

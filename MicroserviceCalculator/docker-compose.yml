@@ -41,6 +41,18 @@ services:
       - seq
       - rmq
 
+  calculator:
+    build: 
+        dockerfile: CalculatorService/Dockerfile
+        context: .
+    ports:
+      - 9090:80
+      - 9091:443
+    depends_on:
+      - zipkin
+      - seq
+      - rmq
+
   subtraction:
     build: 
         dockerfile: SubtractService/Dockerfile
