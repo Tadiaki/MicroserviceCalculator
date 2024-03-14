@@ -35,6 +35,7 @@ namespace CalculatorService.Controllers
         [HttpPost("CreateCalculation")]
         public async Task<ActionResult> CreateCalculationAsync(CalculationRequestDTO calcReqDTO)
         {
+
             try
             {
                 using var activity = Monitoring.ActivitySource.StartActivity();
@@ -79,7 +80,7 @@ namespace CalculatorService.Controllers
             catch (Exception ex)
             {
                 Monitoring.Log.Here().Error(ex, "An error occurred while retrieving the history the calculation");
-                return StatusCode(500, "An error occurred while retrieving history.");
+                return Ok(ex.Message);
             }
         }
 
