@@ -1,16 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using EasyNetQ;
-using OpenTelemetry.Context.Propagation;
-using OpenTelemetry;
-using System.Diagnostics;
+﻿using Microsoft.AspNetCore.Mvc;
 using CalculatorService.DTO_s;
-using CalculatorService.Services;
-using CalculatorService.Enums;
-using Serilog;
 using CalculatorService.Helpers;
 using CalculatorService.Entities;
-using CalculatorService.Communications;
 using CalculatorService.Data.Contexts;
 using CalculatorService.Services.interfaces;
 
@@ -53,6 +44,7 @@ namespace CalculatorService.Controllers
                 if (result != null)
                 {
                     _context.Results.Add(result);
+                    _context.SaveChanges();
                     return Ok(result);
                 }
 
