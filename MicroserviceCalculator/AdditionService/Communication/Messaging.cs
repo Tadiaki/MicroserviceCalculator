@@ -21,7 +21,7 @@ namespace AdditionService.Communication
                     
                     MonitoringService.Log.Here().Information("Got RMQConnection");
 
-                    bus.PubSub.SubscribeAsync<CalculationRequestDTO>("AddService-"+Environment.MachineName, e =>
+                    bus.PubSub.SubscribeAsync<CalculationRequestDTO>("AddService-"+Environment.MachineName, (e) =>
                     {
                         try
                         {
@@ -35,7 +35,7 @@ namespace AdditionService.Communication
                             Baggage.Current = parentContext.Baggage;
 
                             var response = new CalculationResponseDTO();
-                            response.CalculationResult = e.NumberOne - e.NumberTwo;
+                            response.CalculationResult = e.NumberOne + e.NumberTwo;
                             response.CalculationType = e.CalculationType;
                             response.NumberOne = e.NumberOne;
                             response.NumberTwo = e.NumberTwo;

@@ -28,9 +28,6 @@ namespace CalculatorService.Controllers
         {
             try
             {
-                Console.WriteLine(calcReqDTO.NumberOne);
-                Console.WriteLine(calcReqDTO.NumberTwo);
-                Console.WriteLine(calcReqDTO.CalculationType);
                 using var activity = Monitoring.ActivitySource.StartActivity();
 
                 await _cs.SendCalculationRequestAsync(calcReqDTO);

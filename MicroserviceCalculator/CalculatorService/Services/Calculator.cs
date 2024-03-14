@@ -41,7 +41,7 @@ namespace CalculatorService.Services
                     topic = "subtraction";
                 }
                 Monitoring.Log.Here().Error("Sending message");
-                await bus.PubSub.PublishAsync(message, typeof(CalculationRequestDTO), x => x.WithTopic(topic));
+                await bus.PubSub.PublishAsync(message, x => x.WithTopic(topic));
                 Monitoring.Log.Here().Error("Message was send");
             }
         }

@@ -19,7 +19,7 @@ namespace SubtractService.Communication
                 {
                     var bus = ConnectionHelper.GetRMQConnection();
                     MonitoringService.Log.Here().Information("Got RMQConnection");
-                   bus.PubSub.SubscribeAsync<CalculationRequestDTO>("SubService-"+Environment.MachineName, e =>
+                   bus.PubSub.SubscribeAsync<CalculationRequestDTO>("SubService-"+Environment.MachineName, (e) =>
                     {
                         try
                         {
