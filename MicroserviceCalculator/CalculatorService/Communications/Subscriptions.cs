@@ -12,7 +12,7 @@ namespace CalculatorService.Communications
         public static void StartSubtractionSubscription(ResultService resultService)
         {
             _resultService = resultService;
-            _bus = RabbitHutch.CreateBus("host=localhost;username=guest;password=guest");
+            _bus = RabbitHutch.CreateBus("host=rmq;username=guest;password=guest");
 
             var topic = "subtractionResult";
 
@@ -32,7 +32,7 @@ namespace CalculatorService.Communications
         public static void StartAdditionSubscription(ResultService resultService)
         {
             _resultService = resultService;
-            _bus = RabbitHutch.CreateBus("host=localhost;username=guest;password=guest");
+            _bus = RabbitHutch.CreateBus("host=rmq;username=guest;password=guest");
 
             var topic = "additionResult";
 

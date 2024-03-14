@@ -6,7 +6,7 @@ namespace AdditionService.Communication
     {
         public static IBus GetRMQConnection()
         {
-            return RabbitHutch.CreateBus("host=localhost;username=guest;password=guest");
+            return RabbitHutch.CreateBus("host=rmq;username=guest;password=guest");
         }
     }
 }

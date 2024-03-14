@@ -18,8 +18,10 @@ namespace AdditionService.Communication
                 try
                 {
                     var bus = ConnectionHelper.GetRMQConnection();
+                    
                     MonitoringService.Log.Here().Information("Got RMQConnection");
-                    var subscription = bus.PubSub.SubscribeAsync<CalculationRequestDTO>("addition", e =>
+
+                    var subscription = bus.PubSub.SubscribeAsync<CalculationRequestDTO>("addition", async (e, cancellationToken) =>
                     {
                         try
                         {
@@ -51,7 +53,10 @@ namespace AdditionService.Communication
                         {
                             MonitoringService.Log.Here().Error($"An error occurred while processing addition request: {ex.Message}");
                         }
-                    });
+                    }, configure => { });
+
+                    // Log that the subscription is set up
+                    MonitoringService.Log.Here().Information("Subscription to 'addition' topic is set up.");
 
                     connectionEstablished = true; // Subscription successful
                 }

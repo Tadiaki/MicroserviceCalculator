@@ -28,6 +28,8 @@ services:
       interval: 1s
       timeout: 5s
       retries: 30
+    networks:
+      - CalcNetwork
 
   client:
     build: 
@@ -67,6 +69,8 @@ services:
       - rmq
     deploy:
       replicas: 3
+    networks:
+      - CalcNetwork
 
   addition:
     build: 
@@ -78,6 +82,8 @@ services:
       - rmq
     deploy:
       replicas: 3
+    networks:
+      - CalcNetwork
 
 volumes:
   rps_seq_data:
