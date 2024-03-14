@@ -16,6 +16,8 @@ using CalculatorService.Services.interfaces;
 
 namespace CalculatorService.Controllers
 {
+    [ApiController]
+    [Route("[controller]")]
     public class CalculatorController : Controller
     {
         private readonly ICalculator _cs;
