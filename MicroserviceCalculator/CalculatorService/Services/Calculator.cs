@@ -6,27 +6,19 @@ using OpenTelemetry;
 using System.Diagnostics;
 using CalculatorService.Helpers;
 using CalculatorService.Entities;
-using CalculatorService.Data.Handlers;
 using System;
 using System.Threading.Tasks;
 using System.Threading;
+using CalculatorService.Services.interfaces;
 
 
 
 namespace CalculatorService.Services
 {
-    public class Calculator
+    public class Calculator : ICalculator
     {
-        private readonly CalculatorHandler _calcHandler;
-        private readonly IHttpClientFactory _clientFactory;
 
-        public Calculator(CalculatorHandler calcHandler, IHttpClientFactory clientFactory)
-        {
-            _calcHandler = calcHandler;
-            _clientFactory = clientFactory;
-        }
-
-        internal async Task SendCalculationRequestAsync(CalculationRequestDTO calcReqDTO)
+        public async Task SendCalculationRequestAsync(CalculationRequestDTO calcReqDTO)
         {
             using (var activity = Monitoring.ActivitySource.StartActivity())
             {

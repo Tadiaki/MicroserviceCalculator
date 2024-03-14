@@ -1,10 +1,11 @@
 ﻿using CalculatorService.DTO_s;
 using CalculatorService.Entities;
 using CalculatorService.Enums;
+using CalculatorService.Services.interfaces;
 
 namespace CalculatorService.Services
 {
-    public class ResultService
+    public class ResultService :IResultService
     {
         private List<Result> results = new List<Result>();
         private static readonly object resultsLock = new object(); // Lock object for thread safety (is it really needed that it is static?)

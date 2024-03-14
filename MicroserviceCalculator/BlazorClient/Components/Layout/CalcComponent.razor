@@ -31,7 +31,7 @@
         calcdto.Type = CalculationType.Addition;
 
         var client = new HttpClient();
-        var requestmessage = new HttpRequestMessage(HttpMethod.Post, "calculator:9090");
+        var requestmessage = new HttpRequestMessage(HttpMethod.Post, "calculator:9090/createcalculation");
         requestmessage.Content = new StringContent(JsonSerializer.Serialize(calcdto));
         var response = await client.SendAsync(requestmessage);
         var respContent = await response.Content.ReadAsStringAsync();
@@ -54,7 +54,7 @@
         calcdto.Type = CalculationType.Subtraction;
 
         var client = new HttpClient();
-        var requestmessage = new HttpRequestMessage(HttpMethod.Post, "calculator:9090");
+        var requestmessage = new HttpRequestMessage(HttpMethod.Post, "calculator:9090/createcalculation");
         requestmessage.Content = new StringContent(JsonSerializer.Serialize(calcdto));
         var response = await client.SendAsync(requestmessage);
         var respContent = await response.Content.ReadAsStringAsync();

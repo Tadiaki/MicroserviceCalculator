@@ -12,16 +12,17 @@ using CalculatorService.Helpers;
 using CalculatorService.Entities;
 using CalculatorService.Communications;
 using CalculatorService.Data.Contexts;
+using CalculatorService.Services.interfaces;
 
 namespace CalculatorService.Controllers
 {
     public class CalculatorController : Controller
     {
-        private readonly Calculator _cs;
+        private readonly ICalculator _cs;
         private readonly Context _context;
-        private ResultService _resultService;
+        private IResultService _resultService;
 
-        public CalculatorController(Calculator cs, ResultService resultService, Context context)
+        public CalculatorController(ICalculator cs, IResultService resultService, Context context)
         {
             _cs = cs;
             _resultService = resultService;
