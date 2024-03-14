@@ -31,15 +31,17 @@ namespace CalculatorService.Controllers
                 using var activity = Monitoring.ActivitySource.StartActivity();
 
                 await _cs.SendCalculationRequestAsync(calcReqDTO);
-
+                Monitoring.Log.Here().Error("I came out of the senccalcrequest method");
                 var timeoutTask = Task.Delay(5000); // 5 seconds timeout
+                
 
                 Result? result = null;
-
+                Monitoring.Log.Here().Error("Going into loop");
                 while (!timeoutTask.IsCompleted && result == null)
                 {
                     result = _resultService.GetResult(calcReqDTO.NumberOne, calcReqDTO.NumberTwo, calcReqDTO.CalculationType);
                 }
+                Monitoring.Log.Here().Error("We escaped the 5 sec while loop");
 
                 if (result != null)
                 {

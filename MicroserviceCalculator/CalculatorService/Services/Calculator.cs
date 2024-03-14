@@ -22,7 +22,9 @@ namespace CalculatorService.Services
         {
             using (var activity = Monitoring.ActivitySource.StartActivity())
             {
+                Monitoring.Log.Here().Error("Entered calculation service");
                 var bus = RabbitHutch.CreateBus("host=rmq;username=guest;password=guest");
+                Monitoring.Log.Here().Error("Created bus");
 
                 // pub
                 var message = (calcReqDTO);
@@ -31,6 +33,8 @@ namespace CalculatorService.Services
                 var propagationContext = new PropagationContext(activityContext, Baggage.Current);
                 var propagator = new TraceContextPropagator();
                 propagator.Inject(propagationContext, message.Headers, (headers, key, value) => headers.Add(key, value));
+
+                Monitoring.Log.Here().Error("Ready to sendt message");
 
                 var topic = "";
                 if (calcReqDTO.CalculationType == Enums.CalculationType.Addition)
@@ -41,8 +45,9 @@ namespace CalculatorService.Services
                 {
                     topic = "subtraction";
                 }
-
+                Monitoring.Log.Here().Error("Sending message");
                 await bus.PubSub.PublishAsync(message, typeof(CalculationRequestDTO), topic);
+                Monitoring.Log.Here().Error("Message was send");
             }
         }
 
