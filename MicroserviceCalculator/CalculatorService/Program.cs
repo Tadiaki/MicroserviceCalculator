@@ -18,14 +18,28 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+using var scope = app.Services.CreateScope();
+var context = scope.ServiceProvider.GetService<Context>();
+if (context != null)
+{
+    context.Database.EnsureCreated();
+}
+
+
+app.UseCors(options =>
+{
+    options.SetIsOriginAllowed(origin => true)
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials();
+});
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

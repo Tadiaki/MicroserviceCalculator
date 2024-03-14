@@ -18,7 +18,7 @@ namespace CalculatorService.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class CalculatorController : Controller
+    public class CalculatorController : ControllerBase
     {
         private readonly ICalculator _cs;
         private readonly Context _context;
@@ -63,7 +63,7 @@ namespace CalculatorService.Controllers
             {
                 Monitoring.Log.Here().Error(ex, "An error occurred while creating the calculation");
                 Console.WriteLine(ex.ToString());
-                return Content("An error occurred while creating the calculation. Please try again later.");
+                return Content(ex.Message + ". An error occurred while creating the calculation. Please try again later.");
             }
         }
 
@@ -79,7 +79,7 @@ namespace CalculatorService.Controllers
             catch (Exception ex)
             {
                 Monitoring.Log.Here().Error(ex, "An error occurred while retrieving the history the calculation");
-                return StatusCode(500, "An error occurred while retrieving history.");
+                return StatusCode(500, ex.Message + ". An error occurred while retrieving history.");
             }
         }
 

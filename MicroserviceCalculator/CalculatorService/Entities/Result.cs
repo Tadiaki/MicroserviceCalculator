@@ -5,8 +5,9 @@ namespace CalculatorService.Entities
 
     public class Result
     {
-        public Result(double value, CalculationType type, string calculation, double numberOne, double numberTwo)
+        public Result(int? id, double? value, CalculationType type, string calculation, double? numberOne, double? numberTwo)
         {
+            Id = id;
             Value = value;
             Type = type;
             Calculation = calculation;

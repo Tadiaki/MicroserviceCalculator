@@ -1,39 +1,28 @@
 ﻿using CalculatorService.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
 
 namespace CalculatorService.Data.Contexts
 {
     public class Context : DbContext
     {
-        public string DbPath { get; set; }
-        public Context()
-        {
-            var commonPath = "MicroserviceCalculator\\MicroserviceCalculator\\CalculatorService\\Data";
-            var projectDirectory = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName; // Get the project's root directory
-
-            if (projectDirectory != null)
-            {
-                var fullPath = Path.Combine(projectDirectory, commonPath);
-
-                // Create directory if it doesn't exist
-                Directory.CreateDirectory(fullPath);
-
-                DbPath = Path.Combine(fullPath, "WannaBeFirmaSQLite.db");
-            }
-            else
-            {
-                var desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-                var fullPath = Path.Combine(desktopPath, "WannaBeFirmaSQLite.db");
-                DbPath = fullPath;
-            }
+        public Context(DbContextOptions<Context> options) : base(options) {
         }
 
+        // Specify a default location for the SQLite database
+        private const string DefaultDbPath = "WannaBeFirmaSQLite.db";
+
+        // Define a DbSet for your Result entity
         public DbSet<Result> Results { get; set; }
 
-
         protected override void OnConfiguring(DbContextOptionsBuilder options)
-        => options.UseSqlite($"Data Source={DbPath}");
+        {
+            // Always use the default location for the SQLite database
+            options.UseSqlite($"Data Source={DefaultDbPath}");
+        }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Result>().HasKey(r => r.Id);
+        }
 
     }
 }
