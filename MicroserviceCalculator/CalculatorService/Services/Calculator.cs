@@ -22,7 +22,7 @@ namespace CalculatorService.Services
         {
             using (var activity = Monitoring.ActivitySource.StartActivity())
             {
-                var bus = RabbitHutch.CreateBus("host=localhost;username=guest;password=guest");
+                var bus = RabbitHutch.CreateBus("host=rmq;username=guest;password=guest");
 
                 // pub
                 var message = (calcReqDTO);
