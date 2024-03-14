@@ -10,11 +10,15 @@ services:
       - rps_seq_data:/data
     environment:
       - ACCEPT_EULA=Y
+    networks:
+      - CalcNetwork
 
   zipkin:
     image: openzipkin/zipkin
     ports:
       - 9411:9411
+    networks:
+      - CalcNetwork
 
   rmq:
     image: rabbitmq:management
