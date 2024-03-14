@@ -16,7 +16,7 @@ namespace CalculatorService.Communications
 
             var topic = "subtractionResult";
 
-            var subscription = _bus.PubSub.SubscribeAsync<CalculationResponseDTO>(topic, async (e, cancellationToken) =>
+            var subscription = _bus.PubSub.SubscribeAsync<CalculationResponseDTO>("CalcService-"+Environment.MachineName, async (e, cancellationToken) =>
             {
                 if (e != null)
                 {
@@ -26,7 +26,7 @@ namespace CalculatorService.Communications
                 {
                     Console.WriteLine("Received null response from the message bus (subtractionResult).");
                 }
-            }, configure => { });
+            }, x => x.WithTopic(topic));
         }
 
         public static void StartAdditionSubscription(ResultService resultService)
@@ -36,7 +36,7 @@ namespace CalculatorService.Communications
 
             var topic = "additionResult";
 
-            var subscription = _bus.PubSub.SubscribeAsync<CalculationResponseDTO>(topic, async (e, cancellationToken) =>
+            var subscription = _bus.PubSub.SubscribeAsync<CalculationResponseDTO>("CalcService-"+Environment.MachineName, async (e, cancellationToken) =>
             {
                 if (e != null)
                 {
@@ -46,7 +46,7 @@ namespace CalculatorService.Communications
                 {
                     Console.WriteLine("Received null response from the message bus (additionResult).");
                 }
-            }, configure => { });
+            }, x => x.WithTopic(topic));
         }
     }
 }

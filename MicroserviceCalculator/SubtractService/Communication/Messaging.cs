@@ -19,7 +19,7 @@ namespace SubtractService.Communication
                 {
                     var bus = ConnectionHelper.GetRMQConnection();
                     MonitoringService.Log.Here().Information("Got RMQConnection");
-                    var subscription = bus.PubSub.SubscribeAsync<CalculationRequestDTO>("subtraction", async (e, cancellationToken) =>
+                    var subscription = bus.PubSub.SubscribeAsync<CalculationRequestDTO>("SubService-"+Environment.MachineName, e =>
                     {
                         try
                         {
@@ -51,7 +51,7 @@ namespace SubtractService.Communication
                         {
                             MonitoringService.Log.Here().Error($"An error occurred while processing subtraction request: {ex.Message}");
                         }
-                    }, configure => { });
+                    }, x => x.WithTopic("subtraction"));
 
                     // Log that the subscription is set up
                     MonitoringService.Log.Here().Information("Subscription to 'subtraction' topic is set up.");

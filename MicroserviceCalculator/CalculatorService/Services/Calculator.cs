@@ -1,14 +1,9 @@
 ﻿using CalculatorService.DTO_s;
-using CalculatorService.Enums;
 using EasyNetQ;
 using OpenTelemetry.Context.Propagation;
 using OpenTelemetry;
 using System.Diagnostics;
 using CalculatorService.Helpers;
-using CalculatorService.Entities;
-using System;
-using System.Threading.Tasks;
-using System.Threading;
 using CalculatorService.Services.interfaces;
 
 
@@ -34,7 +29,7 @@ namespace CalculatorService.Services
                 var propagator = new TraceContextPropagator();
                 propagator.Inject(propagationContext, message.Headers, (headers, key, value) => headers.Add(key, value));
 
-                Monitoring.Log.Here().Error("Ready to sendt message");
+                Monitoring.Log.Here().Error("Ready to send message");
 
                 var topic = "";
                 if (calcReqDTO.CalculationType == Enums.CalculationType.Addition)

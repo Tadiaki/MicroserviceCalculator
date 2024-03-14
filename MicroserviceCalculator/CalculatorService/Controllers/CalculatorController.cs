@@ -32,14 +32,17 @@ namespace CalculatorService.Controllers
 
                 await _cs.SendCalculationRequestAsync(calcReqDTO);
                 Monitoring.Log.Here().Error("I came out of the senccalcrequest method");
-                var timeoutTask = Task.Delay(5000); // 5 seconds timeout
+                var timeoutTask = Task.Delay(20000); // 5 seconds timeout
                 
 
                 Result? result = null;
                 Monitoring.Log.Here().Error("Going into loop");
                 while (!timeoutTask.IsCompleted && result == null)
                 {
-                    result = _resultService.GetResult(calcReqDTO.NumberOne, calcReqDTO.NumberTwo, calcReqDTO.CalculationType);
+                    Monitoring.Log.Here().Error("Getting result");
+                    result = _resultService.GetResult(calcReqDTO.NumberOne, calcReqDTO.NumberTwo,
+                        calcReqDTO.CalculationType);
+                    Thread.Sleep(1000);
                 }
                 Monitoring.Log.Here().Error("We escaped the 5 sec while loop");
 

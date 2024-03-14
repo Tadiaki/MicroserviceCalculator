@@ -7,7 +7,7 @@ namespace CalculatorService.Services
 {
     public class ResultService :IResultService
     {
-        private List<Result> results = new List<Result>();
+        private List<Result> results = new();
 
 
         public void HandleCalculationResult(CalculationResponseDTO e)
@@ -33,12 +33,8 @@ namespace CalculatorService.Services
                 results.Remove(matchingResult);
                 return matchingResult;
             }
-            else { 
-                Thread.Sleep(1000);
-             return null; }
-            
-
-
+             return null; 
+             
         }
     }
 }

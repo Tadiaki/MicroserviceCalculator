@@ -21,7 +21,7 @@ namespace AdditionService.Communication
                     
                     MonitoringService.Log.Here().Information("Got RMQConnection");
 
-                    var subscription = bus.PubSub.SubscribeAsync<CalculationRequestDTO>("addition", async (e, cancellationToken) =>
+                    var subscription = bus.PubSub.SubscribeAsync<CalculationRequestDTO>("AddService-"+Environment.MachineName, e =>
                     {
                         try
                         {
@@ -53,7 +53,7 @@ namespace AdditionService.Communication
                         {
                             MonitoringService.Log.Here().Error($"An error occurred while processing addition request: {ex.Message}");
                         }
-                    }, configure => { });
+                    }, x => x.WithTopic("addition"));
 
                     // Log that the subscription is set up
                     MonitoringService.Log.Here().Information("Subscription to 'addition' topic is set up.");
