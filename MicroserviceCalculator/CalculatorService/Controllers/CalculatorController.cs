@@ -15,6 +15,8 @@ using CalculatorService.Data.Contexts;
 
 namespace CalculatorService.Controllers
 {
+    [ApiController]
+    [Route("[controller]")]
     public class CalculatorController : Controller
     {
         private readonly Calculator _cs;
