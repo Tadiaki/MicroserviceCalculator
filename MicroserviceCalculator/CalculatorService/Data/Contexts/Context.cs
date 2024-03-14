@@ -5,7 +5,8 @@ namespace CalculatorService.Data.Contexts
 {
     public class Context : DbContext
     {
-        public Context() { }
+        public Context(DbContextOptions<Context> options) : base(options) {
+        }
 
         // Specify a default location for the SQLite database
         private const string DefaultDbPath = "WannaBeFirmaSQLite.db";
@@ -18,5 +19,10 @@ namespace CalculatorService.Data.Contexts
             // Always use the default location for the SQLite database
             options.UseSqlite($"Data Source={DefaultDbPath}");
         }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Result>().HasKey(r => r.Id);
+        }
+
     }
 }

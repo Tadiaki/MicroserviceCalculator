@@ -14,7 +14,7 @@ namespace CalculatorService.Services
         {
             var str = e.CalculationType == CalculationType.Addition ? " + " : " - ";
             var calculation = "" + e.NumberOne + str + e.NumberTwo;
-            var result = new Result(e.CalculationResult, e.CalculationType, calculation, e.NumberOne, e.NumberTwo);
+            var result = new Result(null, e.CalculationResult, e.CalculationType, calculation, e.NumberOne, e.NumberTwo);
             lock (resultsLock)
             {
                 results.Add(result);

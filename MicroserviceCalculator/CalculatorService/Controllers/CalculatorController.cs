@@ -1,16 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using EasyNetQ;
-using OpenTelemetry.Context.Propagation;
-using OpenTelemetry;
-using System.Diagnostics;
+﻿using Microsoft.AspNetCore.Mvc;
 using CalculatorService.DTO_s;
-using CalculatorService.Services;
-using CalculatorService.Enums;
-using Serilog;
 using CalculatorService.Helpers;
 using CalculatorService.Entities;
-using CalculatorService.Communications;
 using CalculatorService.Data.Contexts;
 using CalculatorService.Services.interfaces;
 
@@ -18,7 +9,7 @@ namespace CalculatorService.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class CalculatorController : Controller
+    public class CalculatorController : ControllerBase
     {
         private readonly ICalculator _cs;
         private readonly Context _context;
@@ -35,7 +26,6 @@ namespace CalculatorService.Controllers
         [HttpPost("CreateCalculation")]
         public async Task<ActionResult> CreateCalculationAsync(CalculationRequestDTO calcReqDTO)
         {
-
             try
             {
                 using var activity = Monitoring.ActivitySource.StartActivity();
@@ -54,6 +44,7 @@ namespace CalculatorService.Controllers
                 if (result != null)
                 {
                     _context.Results.Add(result);
+                    _context.SaveChanges();
                     return Ok(result);
                 }
 
@@ -64,7 +55,7 @@ namespace CalculatorService.Controllers
             {
                 Monitoring.Log.Here().Error(ex, "An error occurred while creating the calculation");
                 Console.WriteLine(ex.ToString());
-                return Content("An error occurred while creating the calculation. Please try again later.");
+                return Content(ex.Message + ". An error occurred while creating the calculation. Please try again later.");
             }
         }
 
@@ -80,7 +71,7 @@ namespace CalculatorService.Controllers
             catch (Exception ex)
             {
                 Monitoring.Log.Here().Error(ex, "An error occurred while retrieving the history the calculation");
-                return Ok(ex.Message);
+                return StatusCode(500, ex.Message + ". An error occurred while retrieving history.");
             }
         }
 
