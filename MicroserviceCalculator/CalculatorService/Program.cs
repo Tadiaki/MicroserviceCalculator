@@ -32,10 +32,7 @@ if (context != null)
 
 app.UseCors(options =>
 {
-    options.SetIsOriginAllowed(origin => true)
-        .AllowAnyHeader()
-        .AllowAnyMethod()
-        .AllowCredentials();
+    options.AllowAnyOrigin();
 });
 
 // Configure the HTTP request pipeline.
@@ -45,7 +42,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseAuthorization();
 
 app.MapControllers();
 

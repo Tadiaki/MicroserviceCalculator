@@ -5,6 +5,7 @@
     public double number1 = 0;
     public double number2 = 0;
     public List<Result> results= new List<Result>();
+    public List<Result> fetchedResults = new List<Result>();
 
     public class Result{
         public double Value { get; set; }
@@ -22,6 +23,24 @@
         Subtraction,
     }
 
+    public async Task GetResults()
+    {
+
+        var client = new HttpClient();
+        var requestmessage = new HttpRequestMessage(HttpMethod.Get, "http://172.20.0.1:9090/calculator/GetHistory");
+        var response = await client.SendAsync(requestmessage);
+        var respContent = await response.Content.ReadAsStringAsync();
+        try
+        {
+            fetchedResults = JsonSerializer.Deserialize<List<Result>>(respContent);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"LOG DIS = {ex.Message}");
+        }
+        
+    }
+
     public async Task addnumbers()
     {
         var calcdto = new CalculationDTO();
@@ -30,7 +49,7 @@
         calcdto.Type = CalculationType.Addition;
 
         var client = new HttpClient();
-        var requestmessage = new HttpRequestMessage(HttpMethod.Post, "http://localhost:9090/createcalculation");
+        var requestmessage = new HttpRequestMessage(HttpMethod.Post, "http://172.20.0.1:9090/calculator/createcalculation");
         requestmessage.Content = new StringContent(JsonSerializer.Serialize(calcdto));
         var response = await client.SendAsync(requestmessage);
         var respContent = await response.Content.ReadAsStringAsync();
@@ -52,7 +71,7 @@
         calcdto.NumberTwo = number2;
 
         var client = new HttpClient();
-        var requestmessage = new HttpRequestMessage(HttpMethod.Post, "http://localhost:9090/createcalculation");
+        var requestmessage = new HttpRequestMessage(HttpMethod.Post, "http://172.20.0.1:9090/calculator/createcalculation");
         requestmessage.Content = new StringContent(JsonSerializer.Serialize(calcdto));
         var response = await client.SendAsync(requestmessage);
         var respContent = await response.Content.ReadAsStringAsync();
@@ -84,6 +103,15 @@
          <li>@res.Calculation = @res.Value</li>
     }
  </ul>
+
+    <button @onclick="() => GetResults()">GET HISTORY</button>
+ HISTORY BENEATH HERE:
+    <ul>
+        @foreach (var res in fetchedResults)
+        {
+            <li>@res.Calculation = @res.Value</li>
+        }
+    </ul>
 </div>
 
 
