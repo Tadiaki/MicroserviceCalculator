@@ -12,31 +12,32 @@ namespace CalculatorService.Communications
         public static void StartSubtractionSubscription(ResultService resultService)
         {
             _resultService = resultService;
-            _bus = RabbitHutch.CreateBus("host=rmq;username=guest;password=guest");
+            _bus = RabbitHutch.CreateBus("host=rmq;port=5672;virtualHost=/;username=guest;password=guest");
+                var topic = "subtractionResult";
 
-            var topic = "subtractionResult";
-
-            _bus.PubSub.SubscribeAsync<CalculationResponseDTO>("CalcService-"+Environment.MachineName, e =>
-            {
-                if (e != null)
+                _bus.PubSub.SubscribeAsync<CalculationResponseDTO>("CalcService-" + Environment.MachineName, e =>
                 {
-                    _resultService.HandleCalculationResult(e);
-                }
-                else
-                {
-                    Console.WriteLine("Received null response from the message bus (subtractionResult).");
-                }
-            }, x => x.WithTopic(topic));
+                    if (e != null)
+                    {
+                        _resultService.HandleCalculationResult(e);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Received null response from the message bus (subtractionResult).");
+                    }
+                }, x => x.WithTopic(topic));
+            
         }
 
         public static void StartAdditionSubscription(ResultService resultService)
         {
             _resultService = resultService;
-            _bus = RabbitHutch.CreateBus("host=rmq;username=guest;password=guest");
+            _bus = RabbitHutch.CreateBus("host=rmq;port=5672;virtualHost=/;username=guest;password=guest");
+
 
             var topic = "additionResult";
 
-            _bus.PubSub.SubscribeAsync<CalculationResponseDTO>("CalcService-"+Environment.MachineName, e =>
+            _bus.PubSub.SubscribeAsync<CalculationResponseDTO>("CalcService-" + Environment.MachineName, e =>
             {
                 if (e != null)
                 {

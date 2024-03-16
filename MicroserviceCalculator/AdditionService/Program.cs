@@ -1,15 +1,9 @@
 using AdditionService.Communication;
+using EasyNetQ;
 
-public static class Program
-{
-    public static async Task Main()
-    {
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddHostedService<Messaging>();
 
-        await Messaging.ListenForRequests();
+var app = builder.Build();
 
-        while (true) {
-            Thread.Sleep(5000);
-        }
-        
-    }
-}
+app.Run();

@@ -21,7 +21,7 @@ services:
       - CalcNetwork
 
   rmq:
-    image: rabbitmq:management
+    image: rabbitmq:3-management-alpine
     ports:
       - 5672:5672
       - 15672:15672
@@ -71,8 +71,8 @@ services:
       - zipkin
       - seq
       - rmq
-    deploy:
-      replicas: 3
+    # deploy:
+    #   replicas: 3
     networks:
       - CalcNetwork
 
@@ -84,8 +84,8 @@ services:
       - zipkin
       - seq
       - rmq
-    deploy:
-      replicas: 3
+    # deploy:
+    #   replicas: 3
     networks:
       - CalcNetwork
 

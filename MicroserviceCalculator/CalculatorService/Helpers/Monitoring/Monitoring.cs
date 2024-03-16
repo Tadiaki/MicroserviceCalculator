@@ -1,13 +1,13 @@
-﻿using OpenTelemetry.Resources;
-using OpenTelemetry.Trace;
-using OpenTelemetry;
-using Serilog;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Reflection;
+using OpenTelemetry;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+using Serilog;
 using Serilog.Enrichers.Span;
 using ILogger = Serilog.ILogger;
 
-namespace CalculatorService.Helpers
+namespace CalculatorService.Helpers.Monitoring
 {
     public static class Monitoring
     {

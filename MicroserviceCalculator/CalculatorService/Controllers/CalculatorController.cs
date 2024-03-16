@@ -3,6 +3,7 @@ using CalculatorService.DTO_s;
 using CalculatorService.Helpers;
 using CalculatorService.Entities;
 using CalculatorService.Data.Contexts;
+using CalculatorService.Helpers.Monitoring;
 using CalculatorService.Services.interfaces;
 
 namespace CalculatorService.Controllers
@@ -32,18 +33,17 @@ namespace CalculatorService.Controllers
 
                 await _cs.SendCalculationRequestAsync(calcReqDTO);
 
-                var timeoutTask = Task.Delay(20000); // 5 seconds timeout
+                var timeoutTask = Task.Delay(20000); // 20 seconds timer
                 
 
                 Result? result = null;
-                Monitoring.Log.Here().Error("Going into loop");
+                Monitoring.Log.Here().Information("Going into loop, looking for result");
                 while (!timeoutTask.IsCompleted && result == null)
                 {
                     result = _resultService.GetResult(calcReqDTO.NumberOne, calcReqDTO.NumberTwo,
                         calcReqDTO.CalculationType);
                     Thread.Sleep(1000);
                 }
-                Monitoring.Log.Here().Error("We escaped the 5 sec while loop");
 
                 if (result != null)
                 {
