@@ -18,8 +18,7 @@ namespace CalculatorService.Services
         {
 
             Monitoring.Log.Here().Information("Entered calculation service");
-            var bus = RabbitHutch.CreateBus(
-                "host=rmq;port=5672;virtualHost=/;username=guest;password=guest");
+            var bus = RabbitHutch.CreateBus("host=rmq;port=5672;virtualHost=/;username=guest;password=guest");
 
             Monitoring.Log.Here().Information("Created bus");
 

@@ -22,6 +22,7 @@ services:
 
   rmq:
     image: rabbitmq:3-management-alpine
+    container_name: rmq
     ports:
       - 5672:5672
       - 15672:15672
@@ -57,9 +58,8 @@ services:
       - 9090:80
       - 9091:443
     depends_on:
-      - zipkin
-      - seq
-      - rmq
+      rmq:
+        condition: service_healthy
     networks:
       - CalcNetwork
 
@@ -68,9 +68,8 @@ services:
         dockerfile: SubtractService/Dockerfile
         context: .
     depends_on:
-      - zipkin
-      - seq
-      - rmq
+      rmq:
+        condition: service_healthy
     # deploy:
     #   replicas: 3
     networks:
@@ -81,9 +80,8 @@ services:
         dockerfile: AdditionService/Dockerfile
         context: .
     depends_on:
-      - zipkin
-      - seq
-      - rmq
+      rmq:
+        condition: service_healthy
     # deploy:
     #   replicas: 3
     networks:
