@@ -1,4 +1,7 @@
 ﻿@using System.Text.Json
+@using SharedModels
+@using System.Text
+@using System.Text.Json.Serialization
 @rendermode InteractiveServer
 @code {
 
@@ -7,21 +10,22 @@
     public List<Result> results= new List<Result>();
     public List<Result> fetchedResults = new List<Result>();
 
-    public class Result{
-        public double Value { get; set; }
-        public string Calculation { get; set;  }
+    public class Result {
+        [JsonPropertyName("id")]
+        public int? Id { get; set; }
+        [JsonPropertyName("value")]
+        public double? Value { get; set; }
+        [JsonPropertyName("type")]
         public CalculationType Type { get; set; }
+        [JsonPropertyName("calculation")]
+        public string Calculation { get; set; }
+        [JsonPropertyName("numberOne")]
+        public double? NumberOne { get; set; }
+        [JsonPropertyName("numberTwo")]
+        public double? NumberTwo { get; set; }
+
     }
-    public class CalculationDTO{
-        public double NumberOne { get; set; }
-        public double NumberTwo { get; set; }
-        public CalculationType Type { get; set;  }
-    }
-    public enum CalculationType
-    {
-        Addition,
-        Subtraction,
-    }
+
 
     public async Task GetResults()
     {
@@ -38,21 +42,22 @@
         {
             Console.WriteLine($"LOG DIS = {ex.Message}");
         }
-        
+
     }
 
     public async Task addnumbers()
     {
-        var calcdto = new CalculationDTO();
+        var calcdto = new CalculationRequestDTO();
         calcdto.NumberOne = number1;
         calcdto.NumberTwo = number2;
-        calcdto.Type = CalculationType.Addition;
+        calcdto.CalculationType = CalculationType.Addition;
 
         var client = new HttpClient();
         var requestmessage = new HttpRequestMessage(HttpMethod.Post, "http://172.20.0.1:9090/calculator/createcalculation");
-        requestmessage.Content = new StringContent(JsonSerializer.Serialize(calcdto));
+        requestmessage.Content = new StringContent(JsonSerializer.Serialize(calcdto), Encoding.UTF8, "application/json");
         var response = await client.SendAsync(requestmessage);
         var respContent = await response.Content.ReadAsStringAsync();
+        Console.WriteLine(respContent);
         try{
             
             var result = JsonSerializer.Deserialize<Result>(respContent);
@@ -66,22 +71,23 @@
 
     public async Task substractnumbers()
     {
-        var calcdto = new CalculationDTO();
+        var calcdto = new CalculationRequestDTO();
         calcdto.NumberOne = number1;
         calcdto.NumberTwo = number2;
+        calcdto.CalculationType = CalculationType.Subtraction;
 
         var client = new HttpClient();
         var requestmessage = new HttpRequestMessage(HttpMethod.Post, "http://172.20.0.1:9090/calculator/createcalculation");
-        requestmessage.Content = new StringContent(JsonSerializer.Serialize(calcdto));
+        requestmessage.Content = new StringContent(JsonSerializer.Serialize(calcdto), Encoding.UTF8, "application/json");
         var response = await client.SendAsync(requestmessage);
         var respContent = await response.Content.ReadAsStringAsync();
-        if (response.IsSuccessStatusCode)
+        try 
         {
 
             var result = JsonSerializer.Deserialize<Result>(respContent);
             results.Add(result);
         }
-        else
+        catch
         {
             Console.WriteLine($"LOG DIS = {respContent}");
         }

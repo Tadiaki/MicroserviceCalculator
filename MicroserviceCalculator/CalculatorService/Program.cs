@@ -8,8 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddScoped<ICalculator, Calculator>();
-builder.Services.AddScoped<IResultService, ResultService>();
+builder.Services.AddSingleton<ICalculator, Calculator>();
+builder.Services.AddSingleton<IResultService, ResultService>();
 builder.Services.AddDbContext<Context>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
