@@ -22,7 +22,7 @@ namespace SubtractService.Communication
                     var bus = ConnectionHelper.GetRMQConnection();
                     
                     bus.PubSub.SubscribeAsync<CalculationRequestDTO>
-                        ("AddService-" + Environment.MachineName, HandleSubtractionMessage, x => x.WithTopic("addition"));
+                        ("AddService-" + Environment.MachineName, HandleSubtractionMessage, x => x.WithTopic("subtraction"));
                     
 
                     // Log that the subscription is set up
