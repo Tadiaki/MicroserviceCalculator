@@ -1,7 +1,6 @@
-﻿using CalculatorService.DTO_s;
-using CalculatorService.Entities;
-using CalculatorService.Enums;
+﻿using CalculatorService.Entities;
 using CalculatorService.Services.interfaces;
+using SharedModels;
 
 namespace CalculatorService.Services
 {

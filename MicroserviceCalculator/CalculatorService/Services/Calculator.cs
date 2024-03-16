@@ -1,12 +1,8 @@
-﻿using CalculatorService.DTO_s;
-using EasyNetQ;
-using OpenTelemetry.Context.Propagation;
-using OpenTelemetry;
-using System.Diagnostics;
+﻿using EasyNetQ;
 using CalculatorService.Helpers;
 using CalculatorService.Helpers.Monitoring;
 using CalculatorService.Services.interfaces;
-using EasyNetQ.Topology;
+using SharedModels;
 
 
 namespace CalculatorService.Services
@@ -28,7 +24,7 @@ namespace CalculatorService.Services
             Monitoring.Log.Here().Information("Ready to send message");
 
             var topic = "";
-            topic = calcReqDto.CalculationType == Enums.CalculationType.Addition ? "addition" : "subtraction";
+            topic = calcReqDto.CalculationType == CalculationType.Addition ? "addition" : "subtraction";
 
             Monitoring.Log.Here().Information("Sending message to topic: " + topic);
 

@@ -1,6 +1,6 @@
-﻿using CalculatorService.DTO_s;
-using CalculatorService.Services;
+﻿using CalculatorService.Services;
 using EasyNetQ;
+using SharedModels;
 
 namespace CalculatorService.Communications
 {

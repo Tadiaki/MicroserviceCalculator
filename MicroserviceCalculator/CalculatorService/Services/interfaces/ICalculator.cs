@@ -1,4 +1,4 @@
-﻿using CalculatorService.DTO_s;
+﻿using SharedModels;
 
 namespace CalculatorService.Services.interfaces
 {

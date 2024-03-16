@@ -2,8 +2,9 @@
 using OpenTelemetry.Context.Propagation;
 using OpenTelemetry;
 using System.Diagnostics;
+using SharedModels;
 using SubtractService.Monitoring;
-using SubtractService.DTO_s;
+
 
 namespace SubtractService.Communication
 {

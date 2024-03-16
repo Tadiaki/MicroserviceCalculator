@@ -1,4 +1,5 @@
-﻿using CalculatorService.Enums;
+﻿
+using SharedModels;
 
 namespace CalculatorService.Entities
 {

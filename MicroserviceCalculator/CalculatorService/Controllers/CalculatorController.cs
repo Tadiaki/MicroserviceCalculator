@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using CalculatorService.DTO_s;
 using CalculatorService.Helpers;
 using CalculatorService.Entities;
 using CalculatorService.Data.Contexts;
 using CalculatorService.Helpers.Monitoring;
 using CalculatorService.Services.interfaces;
+using SharedModels;
 
 namespace CalculatorService.Controllers
 {
