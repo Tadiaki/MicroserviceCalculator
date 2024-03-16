@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SubtractService", "Subtract
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorClient", "BlazorClient\BlazorClient.csproj", "{929205F4-0226-4E55-930E-155C1D22344C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedModels", "SharedModels\SharedModels.csproj", "{B36052AD-C4F5-47CB-A947-BE9E6C692955}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{929205F4-0226-4E55-930E-155C1D22344C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{929205F4-0226-4E55-930E-155C1D22344C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{929205F4-0226-4E55-930E-155C1D22344C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B36052AD-C4F5-47CB-A947-BE9E6C692955}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B36052AD-C4F5-47CB-A947-BE9E6C692955}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B36052AD-C4F5-47CB-A947-BE9E6C692955}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B36052AD-C4F5-47CB-A947-BE9E6C692955}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

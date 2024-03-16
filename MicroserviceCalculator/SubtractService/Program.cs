@@ -1,14 +1,9 @@
+using EasyNetQ;
 using SubtractService.Communication;
-public static class Program
-{
-    public static async Task Main()
-    {
-        await Messaging.ListenForRequests();
 
-        while (true)
-        {
-            Thread.Sleep(5000);
-        }
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddHostedService<Messaging>();
 
-    }
-}
+var app = builder.Build();
+
+app.Run();

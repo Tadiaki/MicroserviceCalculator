@@ -2,14 +2,14 @@
 using OpenTelemetry.Context.Propagation;
 using OpenTelemetry;
 using System.Diagnostics;
-using AdditionService.DTO_s;
 using AdditionService.Monitoring;
+using SharedModels;
 
 namespace AdditionService.Communication
 {
-    public static class Messaging
+    public class Messaging: BackgroundService
     {
-        public static async Task ListenForRequests()
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             var connectionEstablished = false;
 
@@ -19,44 +19,12 @@ namespace AdditionService.Communication
                 {
                     var bus = ConnectionHelper.GetRMQConnection();
                     
-                    MonitoringService.Log.Here().Information("Got RMQConnection");
-
-                    var subscription = bus.PubSub.SubscribeAsync<CalculationRequestDTO>("addition", async (e, cancellationToken) =>
-                    {
-                        try
-                        {
-                            MonitoringService.Log.Here().Information("Received request for addition of {NumberOne} and {NumberTwo}", e.NumberOne, e.NumberTwo);
-
-                            var propagator = new TraceContextPropagator();
-                            var parentContext = propagator.Extract(default, e, (r, key) =>
-                            {
-                                return new List<string>(new[] { r.Headers.ContainsKey(key) ? r.Headers[key].ToString() : String.Empty }!);
-                            });
-                            Baggage.Current = parentContext.Baggage;
-
-                            var response = new CalculationResponseDTO();
-                            response.CalculationResult = e.NumberOne - e.NumberTwo;
-                            response.CalculationType = e.CalculationType;
-                            MonitoringService.Log.Here().Information("calculated result for addition of {NumberOne} and {NumberTwo}: result {response}", e.NumberOne, e.NumberTwo, response.CalculationResult);
-
-                            using (var activity = MonitoringService.ActivitySource.StartActivity("Received task", ActivityKind.Consumer, parentContext.ActivityContext))
-                            {
-                                var activityContext = activity?.Context ?? Activity.Current?.Context ?? default;
-                                var propagationContext = new PropagationContext(activityContext, Baggage.Current);
-                                propagator.Inject(propagationContext, response.Headers, (headers, key, value) => headers.Add(key, value));
-                                string topic = "additionResult";
-                                MonitoringService.Log.Here().Information("publishing result to topic {topic} {response}", topic, response);
-                                bus.PubSub.PublishAsync(response, x => x.WithTopic(topic));
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            MonitoringService.Log.Here().Error($"An error occurred while processing addition request: {ex.Message}");
-                        }
-                    }, configure => { });
+                    bus.PubSub.SubscribeAsync<CalculationRequestDTO>
+                        ("AddService-" + Environment.MachineName, HandleAdditionMessage, x => x.WithTopic("addition"));
+                    
 
                     // Log that the subscription is set up
-                    MonitoringService.Log.Here().Information("Subscription to 'addition' topic is set up.");
+                    MonitoringService.Log.Here().Information("Subscription to addition topic is set up. Machine: " + Environment.MachineName + " is ready to consume.");
 
                     connectionEstablished = true; // Subscription successful
                 }
@@ -66,7 +34,56 @@ namespace AdditionService.Communication
                     await Task.Delay(1000); // Wait before attempting to reconnect
                 }
             }
-            MonitoringService.Log.Here().Information("Connection Established. Subscription successful!");
+        }
+        
+        
+        private void HandleAdditionMessage(CalculationRequestDTO message)
+        {
+             try
+            {
+                MonitoringService.Log.Here()
+                    .Information("Received request for addition of {NumberOne} and {NumberTwo}",
+                        message.NumberOne, message.NumberTwo);
+
+                var propagator = new TraceContextPropagator();
+                var parentContext = propagator.Extract(default, message,
+                    (r, key) =>
+                    {
+                        return new List<string>(new[]
+                            { r.Headers.ContainsKey(key) ? r.Headers[key].ToString() : String.Empty }!);
+                    });
+                Baggage.Current = parentContext.Baggage;
+
+                var response = new CalculationResponseDTO();
+                response.CalculationResult = message.NumberOne + message.NumberTwo;
+                response.CalculationType = message.CalculationType;
+                response.NumberOne = message.NumberOne;
+                response.NumberTwo = message.NumberTwo;
+                MonitoringService.Log.Here()
+                    .Information(
+                        "calculated result for addition of {NumberOne} and {NumberTwo}: result {response}",
+                        message.NumberOne, message.NumberTwo, response.CalculationResult);
+
+                using (var activity = MonitoringService.ActivitySource.StartActivity("Received task",
+                           ActivityKind.Consumer, parentContext.ActivityContext))
+                {
+                    var activityContext = activity?.Context ?? Activity.Current?.Context ?? default;
+                    var propagationContext = new PropagationContext(activityContext, Baggage.Current);
+                    propagator.Inject(propagationContext, response.Headers,
+                        (headers, key, value) => headers.Add(key, value));
+                    string topic = "additionResult";
+                    var bus = ConnectionHelper.GetRMQConnection();
+                    MonitoringService.Log.Here()
+                        .Information("publishing result to topic {topic} {response}", topic, response);
+                        bus.PubSub.PublishAsync(response, x => x.WithTopic(topic));
+                        bus.Dispose();
+                }
+            }
+            catch (Exception ex)
+            {
+                MonitoringService.Log.Here()
+                    .Error($"An error occurred while processing addition request: {ex.Message}");
+            }
         }
     }
 }

@@ -1,16 +1,8 @@
-﻿using CalculatorService.DTO_s;
-using CalculatorService.Enums;
-using EasyNetQ;
-using OpenTelemetry.Context.Propagation;
-using OpenTelemetry;
-using System.Diagnostics;
+﻿using EasyNetQ;
 using CalculatorService.Helpers;
-using CalculatorService.Entities;
-using System;
-using System.Threading.Tasks;
-using System.Threading;
+using CalculatorService.Helpers.Monitoring;
 using CalculatorService.Services.interfaces;
-
+using SharedModels;
 
 
 namespace CalculatorService.Services
@@ -18,39 +10,30 @@ namespace CalculatorService.Services
     public class Calculator : ICalculator
     {
 
-        public async Task SendCalculationRequestAsync(CalculationRequestDTO calcReqDTO)
+        public async Task SendCalculationRequestAsync(CalculationRequestDTO calcReqDto)
         {
-            using (var activity = Monitoring.ActivitySource.StartActivity())
-            {
-                Monitoring.Log.Here().Error("Entered calculation service");
-                var bus = RabbitHutch.CreateBus("host=rmq;username=guest;password=guest");
-                Monitoring.Log.Here().Error("Created bus");
 
-                // pub
-                var message = (calcReqDTO);
+            Monitoring.Log.Here().Information("Entered calculation service");
+            var bus = RabbitHutch.CreateBus("host=rmq;port=5672;virtualHost=/;username=guest;password=guest");
 
-                var activityContext = activity?.Context ?? Activity.Current?.Context ?? default;
-                var propagationContext = new PropagationContext(activityContext, Baggage.Current);
-                var propagator = new TraceContextPropagator();
-                propagator.Inject(propagationContext, message.Headers, (headers, key, value) => headers.Add(key, value));
+            Monitoring.Log.Here().Information("Created bus");
 
-                Monitoring.Log.Here().Error("Ready to sendt message");
+            // pub
+            var message = calcReqDto;
 
-                var topic = "";
-                if (calcReqDTO.CalculationType == Enums.CalculationType.Addition)
-                {
-                    topic = "addition";
-                }
-                else
-                {
-                    topic = "subtraction";
-                }
-                Monitoring.Log.Here().Error("Sending message");
-                await bus.PubSub.PublishAsync(message, typeof(CalculationRequestDTO), topic);
-                Monitoring.Log.Here().Error("Message was send");
-            }
+            Monitoring.Log.Here().Information("Ready to send message");
+
+            var topic = "";
+            topic = calcReqDto.CalculationType == CalculationType.Addition ? "addition" : "subtraction";
+
+            Monitoring.Log.Here().Information("Sending message to topic: " + topic);
+
+            await bus.PubSub.PublishAsync(message, x => x.WithTopic(topic));
+            bus.Dispose();
+
+
+            Monitoring.Log.Here().Information("Message was send");
         }
-
-
     }
+
 }

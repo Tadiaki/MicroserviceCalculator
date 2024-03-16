@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using CalculatorService.DTO_s;
 using CalculatorService.Helpers;
 using CalculatorService.Entities;
 using CalculatorService.Data.Contexts;
+using CalculatorService.Helpers.Monitoring;
 using CalculatorService.Services.interfaces;
+using SharedModels;
 
 namespace CalculatorService.Controllers
 {
@@ -31,23 +32,23 @@ namespace CalculatorService.Controllers
                 using var activity = Monitoring.ActivitySource.StartActivity();
 
                 await _cs.SendCalculationRequestAsync(calcReqDTO);
-                Monitoring.Log.Here().Error("I came out of the senccalcrequest method");
-                var timeoutTask = Task.Delay(5000); // 5 seconds timeout
+
+                var timeoutTask = Task.Delay(20000); // 20 seconds timer
                 
 
                 Result? result = null;
-                Monitoring.Log.Here().Error("Going into loop");
+                Monitoring.Log.Here().Information("Going into loop, looking for result");
                 while (!timeoutTask.IsCompleted && result == null)
                 {
+                    result = _resultService.GetResult(calcReqDTO.NumberOne, calcReqDTO.NumberTwo,
+                        calcReqDTO.CalculationType);
                     Thread.Sleep(1000);
-                    result = _resultService.GetResult(calcReqDTO.NumberOne, calcReqDTO.NumberTwo, calcReqDTO.CalculationType);
                 }
-                Monitoring.Log.Here().Error("We escaped the 5 sec while loop");
 
                 if (result != null)
                 {
                     _context.Results.Add(result);
-                    _context.SaveChanges();
+                    await _context.SaveChangesAsync();
                     return Ok(result);
                 }
 

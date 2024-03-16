@@ -1,42 +1,38 @@
-﻿using CalculatorService.DTO_s;
-using CalculatorService.Entities;
-using CalculatorService.Enums;
+﻿using CalculatorService.Entities;
 using CalculatorService.Services.interfaces;
+using SharedModels;
 
 namespace CalculatorService.Services
 {
     public class ResultService : IResultService
     {
-        private List<Result> results = new List<Result>();
+        private readonly List<Result> _results = new();
 
 
         public void HandleCalculationResult(CalculationResponseDTO e)
         {
+            Console.WriteLine("I received a result");
             var str = e.CalculationType == CalculationType.Addition ? " + " : " - ";
             var calculation = "" + e.NumberOne + str + e.NumberTwo;
             var result = new Result(null, e.CalculationResult, e.CalculationType, calculation, e.NumberOne, e.NumberTwo);
 
-            results.Add(result);
-
+                _results.Add(result);
         }
 
         public Result GetResult(double numberOne, double numberTwo, CalculationType calculationType)
         {
 
-            var matchingResult = results.FirstOrDefault(r =>
-                r.NumberOne == numberOne &&
-                r.NumberTwo == numberTwo &&
-                r.Type == calculationType);
+                var matchingResult = _results.FirstOrDefault(r =>
+            r.NumberOne == numberOne &&
+            r.NumberTwo == numberTwo &&
+            r.Type == calculationType);
 
             if (matchingResult != null)
             {
-                results.Remove(matchingResult);
+                _results.Remove(matchingResult);
                 return matchingResult;
             }
-            else
-            {
-                return null;
-            }
+            return null;
         }
     }
 }

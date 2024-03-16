@@ -1,6 +1,6 @@
-﻿using CalculatorService.DTO_s;
-using CalculatorService.Services;
+﻿using CalculatorService.Services;
 using EasyNetQ;
+using SharedModels;
 
 namespace CalculatorService.Communications
 {
@@ -12,31 +12,32 @@ namespace CalculatorService.Communications
         public static void StartSubtractionSubscription(ResultService resultService)
         {
             _resultService = resultService;
-            _bus = RabbitHutch.CreateBus("host=rmq;username=guest;password=guest");
+            _bus = RabbitHutch.CreateBus("host=rmq;port=5672;virtualHost=/;username=guest;password=guest");
+                var topic = "subtractionResult";
 
-            var topic = "subtractionResult";
-
-            var subscription = _bus.PubSub.SubscribeAsync<CalculationResponseDTO>(topic, async (e, cancellationToken) =>
-            {
-                if (e != null)
+                _bus.PubSub.SubscribeAsync<CalculationResponseDTO>("CalcService-" + Environment.MachineName, e =>
                 {
-                    _resultService.HandleCalculationResult(e);
-                }
-                else
-                {
-                    Console.WriteLine("Received null response from the message bus (subtractionResult).");
-                }
-            }, configure => { });
+                    if (e != null)
+                    {
+                        _resultService.HandleCalculationResult(e);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Received null response from the message bus (subtractionResult).");
+                    }
+                }, x => x.WithTopic(topic));
+            
         }
 
         public static void StartAdditionSubscription(ResultService resultService)
         {
             _resultService = resultService;
-            _bus = RabbitHutch.CreateBus("host=rmq;username=guest;password=guest");
+            _bus = RabbitHutch.CreateBus("host=rmq;port=5672;virtualHost=/;username=guest;password=guest");
+
 
             var topic = "additionResult";
 
-            var subscription = _bus.PubSub.SubscribeAsync<CalculationResponseDTO>(topic, async (e, cancellationToken) =>
+            _bus.PubSub.SubscribeAsync<CalculationResponseDTO>("CalcService-" + Environment.MachineName, e =>
             {
                 if (e != null)
                 {
@@ -46,7 +47,7 @@ namespace CalculatorService.Communications
                 {
                     Console.WriteLine("Received null response from the message bus (additionResult).");
                 }
-            }, configure => { });
+            }, x => x.WithTopic(topic));
         }
     }
 }
