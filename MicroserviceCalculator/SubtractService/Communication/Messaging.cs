@@ -76,7 +76,7 @@ namespace SubtractService.Communication
                     
                     var bus = ConnectionHelper.GetRMQConnection();
                     await bus.PubSub.PublishAsync(response, x => x.WithTopic(topic));
-
+                    bus.Dispose();
                 }
             }
             catch (Exception ex)

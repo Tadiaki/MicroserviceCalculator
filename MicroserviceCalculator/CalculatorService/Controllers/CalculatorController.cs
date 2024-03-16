@@ -48,7 +48,7 @@ namespace CalculatorService.Controllers
                 if (result != null)
                 {
                     _context.Results.Add(result);
-                    _context.SaveChanges();
+                    await _context.SaveChangesAsync();
                     return Ok(result);
                 }
 

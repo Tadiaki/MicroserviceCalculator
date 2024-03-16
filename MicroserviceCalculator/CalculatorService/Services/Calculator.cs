@@ -16,32 +16,26 @@ namespace CalculatorService.Services
 
         public async Task SendCalculationRequestAsync(CalculationRequestDTO calcReqDto)
         {
-            using (var activity = Monitoring.ActivitySource.StartActivity())
-            {
-                Monitoring.Log.Here().Information("Entered calculation service");
-                var bus = RabbitHutch.CreateBus(
-                    "host=rmq;port=5672;virtualHost=/;username=guest;password=guest");
 
-                Monitoring.Log.Here().Information("Created bus");
+            Monitoring.Log.Here().Information("Entered calculation service");
+            var bus = RabbitHutch.CreateBus(
+                "host=rmq;port=5672;virtualHost=/;username=guest;password=guest");
 
-                // pub
-                var message = calcReqDto;
+            Monitoring.Log.Here().Information("Created bus");
 
-                var activityContext = activity?.Context ?? Activity.Current?.Context ?? default;
-                var propagationContext = new PropagationContext(activityContext, Baggage.Current);
-                var propagator = new TraceContextPropagator();
-                propagator.Inject(propagationContext, message.Headers,
-                    (headers, key, value) => headers.Add(key, value));
+            // pub
+            var message = calcReqDto;
 
-                Monitoring.Log.Here().Information("Ready to send message");
+            Monitoring.Log.Here().Information("Ready to send message");
 
-                var topic = "";
-                topic = calcReqDto.CalculationType == Enums.CalculationType.Addition ? "addition" : "subtraction";
+            var topic = "";
+            topic = calcReqDto.CalculationType == Enums.CalculationType.Addition ? "addition" : "subtraction";
 
-                Monitoring.Log.Here().Information("Sending message to topic: " + topic);
+            Monitoring.Log.Here().Information("Sending message to topic: " + topic);
 
-                await bus.PubSub.PublishAsync(message, topic);
-            }
+            await bus.PubSub.PublishAsync(message, x => x.WithTopic(topic));
+            bus.Dispose();
+
 
             Monitoring.Log.Here().Information("Message was send");
         }

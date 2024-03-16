@@ -76,6 +76,7 @@ namespace AdditionService.Communication
                     MonitoringService.Log.Here()
                         .Information("publishing result to topic {topic} {response}", topic, response);
                         bus.PubSub.PublishAsync(response, x => x.WithTopic(topic));
+                        bus.Dispose();
                 }
             }
             catch (Exception ex)
