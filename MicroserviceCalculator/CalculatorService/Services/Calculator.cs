@@ -15,7 +15,7 @@ namespace CalculatorService.Services
 
         public async Task SendCalculationRequestAsync(CalculationRequestDTO calcReqDto)
         {
-
+            using var activity = Monitoring.ActivitySource.StartActivity("Received create calculation REST call.");
             Monitoring.Log.Here().Information("Entered calculation service");
             var bus = RabbitHutch.CreateBus("host=rmq;port=5672;virtualHost=/;username=guest;password=guest");
 
@@ -23,29 +23,19 @@ namespace CalculatorService.Services
 
             // pub
             var message = calcReqDto;
-            {
-            }
-            using (var activity = Monitoring.ActivitySource.StartActivity("Received create calculation REST call.")){
-                var propagator = new TraceContextPropagator();
-                var activityContext = activity?.Context ?? Activity.Current?.Context ?? default;
-                var propagationContext = new PropagationContext(activityContext, Baggage.Current);
-                propagator.Inject(propagationContext, calcReqDto.Headers, (headers, key, value) => headers.Add(key, value));
+            
+            Monitoring.Log.Here().Information("Ready to send message");
 
-                Monitoring.Log.Here().Information("Ready to send message");
+            var topic = "";
+            topic = calcReqDto.CalculationType == CalculationType.Addition ? "addition" : "subtraction";
 
-                var topic = "";
-                topic = calcReqDto.CalculationType == CalculationType.Addition ? "addition" : "subtraction";
+            Monitoring.Log.Here().Information("Sending message to topic: " + topic);
 
-                Monitoring.Log.Here().Information("Sending message to topic: " + topic);
-
-                await bus.PubSub.PublishAsync(message, x => x.WithTopic(topic));
-                bus.Dispose();
+            await bus.PubSub.PublishAsync(message, x => x.WithTopic(topic));
+            bus.Dispose();
 
 
-                Monitoring.Log.Here().Information("Message was send");
+            Monitoring.Log.Here().Information("Message was send");
         }
-
     }
-    }
-
 }

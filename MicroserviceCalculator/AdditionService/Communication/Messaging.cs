@@ -37,7 +37,7 @@ namespace AdditionService.Communication
         }
         
         
-        private void HandleAdditionMessage(CalculationRequestDTO message)
+        private async void HandleAdditionMessage(CalculationRequestDTO message)
         {
              try
             {
@@ -51,9 +51,9 @@ namespace AdditionService.Communication
                     return new List<string>(new[] { r.Headers.ContainsKey(key) ? r.Headers[key].ToString() : String.Empty }!);
                 });
                 Baggage.Current = parentContext.Baggage;
-                
-                using (var activity = MonitoringService.ActivitySource.StartActivity("Received addition task", ActivityKind.Consumer, parentContext.ActivityContext))
-                {
+
+                using var activity = MonitoringService.ActivitySource.StartActivity("Received addition task",
+                    ActivityKind.Consumer, parentContext.ActivityContext);
                     
                 var response = new CalculationResponseDTO();
                 response.CalculationResult = message.NumberOne + message.NumberTwo;
@@ -72,9 +72,10 @@ namespace AdditionService.Communication
                 var bus = ConnectionHelper.GetRMQConnection();
                 MonitoringService.Log.Here()
                     .Information("publishing result to topic {topic} {response}", topic, response);
-                    bus.PubSub.PublishAsync(response, x => x.WithTopic(topic));
-                    bus.Dispose();
-                }
+                    
+                await bus.PubSub.PublishAsync(response, x => x.WithTopic(topic));
+                bus.Dispose();
+                
             }
             catch (Exception ex)
             {

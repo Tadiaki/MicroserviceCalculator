@@ -51,6 +51,9 @@ namespace SubtractService.Communication
                     return new List<string>(new[] { r.Headers.ContainsKey(key) ? r.Headers[key].ToString() : String.Empty }!);
                 });
                 Baggage.Current = parentContext.Baggage;
+                
+                using var activity = MonitoringService.ActivitySource.StartActivity("Received subtraction task",
+                    ActivityKind.Consumer, parentContext.ActivityContext);
 
                 var response = new CalculationResponseDTO();
                 response.CalculationResult = message.NumberOne - message.NumberTwo;
@@ -61,20 +64,18 @@ namespace SubtractService.Communication
                     .Information(
                         "calculated result for subtraction of {NumberOne} and {NumberTwo}: result {response}",
                         message.NumberOne, message.NumberTwo, response.CalculationResult);
-
-                using (var activity = MonitoringService.ActivitySource.StartActivity("Received subtraction task", ActivityKind.Consumer, parentContext.ActivityContext))
-                {
-                    var activityContext = activity?.Context ?? Activity.Current?.Context ?? default;
-                    var propagationContext = new PropagationContext(activityContext, Baggage.Current);
-                    propagator.Inject(propagationContext, response.Headers, (headers, key, value) => headers.Add(key, value));
-                    string topic = "subtractionResult";
-                    MonitoringService.Log.Here()
-                        .Information("publishing result to topic {topic} {response}", topic, response);
-                    
-                    var bus = ConnectionHelper.GetRMQConnection();
-                    await bus.PubSub.PublishAsync(response, x => x.WithTopic(topic));
-                    bus.Dispose();
-                }
+                
+                var activityContext = activity?.Context ?? Activity.Current?.Context ?? default;
+                var propagationContext = new PropagationContext(activityContext, Baggage.Current);
+                propagator.Inject(propagationContext, response.Headers, (headers, key, value) => headers.Add(key, value));
+                string topic = "subtractionResult";
+                MonitoringService.Log.Here()
+                    .Information("publishing result to topic {topic} {response}", topic, response);
+                
+                var bus = ConnectionHelper.GetRMQConnection();
+                await bus.PubSub.PublishAsync(response, x => x.WithTopic(topic));
+                bus.Dispose();
+                
             }
             catch (Exception ex)
             {

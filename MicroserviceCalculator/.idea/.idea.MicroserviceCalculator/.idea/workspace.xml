@@ -19,10 +19,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6b23242e-a3fb-4527-baca-68946cdef33a" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.MicroserviceCalculator/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MicroserviceCalculator/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AdditionService/Communication/Messaging.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AdditionService/Communication/Messaging.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BlazorClient/Components/Layout/CalcComponent.razor" beforeDir="false" afterPath="$PROJECT_DIR$/BlazorClient/Components/Layout/CalcComponent.razor" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CalculatorService/Communications/Subscriptions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CalculatorService/Communications/Subscriptions.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CalculatorService/Controllers/CalculatorController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CalculatorService/Controllers/CalculatorController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CalculatorService/Services/Calculator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CalculatorService/Services/Calculator.cs" afterDir="false" />
@@ -39,6 +37,7 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/2362daeded72ecb93e45c6daeb8864f181f9258f26bee37e95f8c0d066a0bda/ILogger.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/54a589882a45c50b713f7aa975bb5c63ac968964aa13b6640c56288353ffe9/IPubSub.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo">{
@@ -271,7 +270,7 @@
       <workItem from="1710584876137" duration="5707000" />
       <workItem from="1710599460096" duration="4810000" />
       <workItem from="1710665120758" duration="546000" />
-      <workItem from="1710666244515" duration="6874000" />
+      <workItem from="1710666244515" duration="11236000" />
     </task>
     <servers />
   </component>

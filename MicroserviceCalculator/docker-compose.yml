@@ -70,8 +70,8 @@ services:
     depends_on:
       rmq:
         condition: service_healthy
-#    deploy:
-#      replicas: 3
+    deploy:
+      replicas: 3
     networks:
       - CalcNetwork
 
@@ -82,8 +82,8 @@ services:
     depends_on:
       rmq:
         condition: service_healthy
-#    deploy:
-#      replicas: 3
+    deploy:
+      replicas: 3
     networks:
       - CalcNetwork
 

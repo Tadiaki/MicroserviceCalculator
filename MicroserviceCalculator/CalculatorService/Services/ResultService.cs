@@ -21,14 +21,11 @@ namespace CalculatorService.Services
             });
             using var activity = Monitoring.ActivitySource.StartActivity("Taking care of calculation result", ActivityKind.Consumer, parentContext.ActivityContext);
             
-            Console.WriteLine("I received a result");
             var str = e.CalculationType == CalculationType.Addition ? " + " : " - ";
             var calculation = "" + e.NumberOne + str + e.NumberTwo;
             var result = new Result(null, e.CalculationResult, e.CalculationType, calculation, e.NumberOne, e.NumberTwo);
 
             _results.Add(result);
-            Console.WriteLine("Adding count : " +_results.Count);
-            Console.WriteLine("Added Result To List");
         }
 
         public Result GetResult(double numberOne, double numberTwo, CalculationType calculationType)
