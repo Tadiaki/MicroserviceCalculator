@@ -1,5 +1,8 @@
-﻿using CalculatorService.Entities;
+﻿using System.Diagnostics;
+using CalculatorService.Entities;
+using CalculatorService.Helpers.Monitoring;
 using CalculatorService.Services.interfaces;
+using OpenTelemetry.Context.Propagation;
 using SharedModels;
 
 namespace CalculatorService.Services
@@ -11,6 +14,13 @@ namespace CalculatorService.Services
 
         public void HandleCalculationResult(CalculationResponseDTO e)
         {
+            var propagator = new TraceContextPropagator();
+            var parentContext = propagator.Extract(default, e, (r, key) =>
+            {
+                return new List<string>(new[] { r.Headers.ContainsKey(key) ? r.Headers[key].ToString() : String.Empty }!);
+            });
+            using var activity = Monitoring.ActivitySource.StartActivity("Taking care of calculation result", ActivityKind.Consumer, parentContext.ActivityContext);
+            
             Console.WriteLine("I received a result");
             var str = e.CalculationType == CalculationType.Addition ? " + " : " - ";
             var calculation = "" + e.NumberOne + str + e.NumberTwo;

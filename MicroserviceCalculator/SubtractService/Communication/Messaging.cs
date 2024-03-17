@@ -46,12 +46,10 @@ namespace SubtractService.Communication
                         message.NumberOne, message.NumberTwo);
 
                 var propagator = new TraceContextPropagator();
-                var parentContext = propagator.Extract(default, message,
-                    (r, key) =>
-                    {
-                        return new List<string>(new[]
-                            { r.Headers.ContainsKey(key) ? r.Headers[key].ToString() : String.Empty }!);
-                    });
+                var parentContext = propagator.Extract(default, message, (r, key) =>
+                {
+                    return new List<string>(new[] { r.Headers.ContainsKey(key) ? r.Headers[key].ToString() : String.Empty }!);
+                });
                 Baggage.Current = parentContext.Baggage;
 
                 var response = new CalculationResponseDTO();
@@ -64,13 +62,11 @@ namespace SubtractService.Communication
                         "calculated result for subtraction of {NumberOne} and {NumberTwo}: result {response}",
                         message.NumberOne, message.NumberTwo, response.CalculationResult);
 
-                using (var activity = MonitoringService.ActivitySource.StartActivity("Received task",
-                           ActivityKind.Consumer, parentContext.ActivityContext))
+                using (var activity = MonitoringService.ActivitySource.StartActivity("Received subtraction task", ActivityKind.Consumer, parentContext.ActivityContext))
                 {
                     var activityContext = activity?.Context ?? Activity.Current?.Context ?? default;
                     var propagationContext = new PropagationContext(activityContext, Baggage.Current);
-                    propagator.Inject(propagationContext, response.Headers,
-                        (headers, key, value) => headers.Add(key, value));
+                    propagator.Inject(propagationContext, response.Headers, (headers, key, value) => headers.Add(key, value));
                     string topic = "subtractionResult";
                     MonitoringService.Log.Here()
                         .Information("publishing result to topic {topic} {response}", topic, response);

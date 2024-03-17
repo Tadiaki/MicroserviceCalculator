@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
 using CalculatorService.Helpers;
 using CalculatorService.Entities;
 using CalculatorService.Data.Contexts;
 using CalculatorService.Helpers.Monitoring;
 using CalculatorService.Services.interfaces;
+using OpenTelemetry;
+using OpenTelemetry.Context.Propagation;
 using SharedModels;
 
 namespace CalculatorService.Controllers
@@ -29,33 +32,40 @@ namespace CalculatorService.Controllers
         {
             try
             {
-                using var activity = Monitoring.ActivitySource.StartActivity();
-
-                await _cs.SendCalculationRequestAsync(calcReqDTO);
-
-                var timeoutTask = Task.Delay(20000); // 20 seconds timer
-                
-
-                Result? result = null;
-                Monitoring.Log.Here().Information("Going into loop, looking for result");
-                while (!timeoutTask.IsCompleted && result == null)
+                Monitoring.Log.Here()
+                    .Information(
+                        "Request received for creating a new calculation: {calcReqDTO}", calcReqDTO);
+                using (Monitoring.ActivitySource.StartActivity("printer hej.")){Console.WriteLine("hej");}
+                using (Monitoring.ActivitySource.StartActivity("Received create calculation REST call."))
                 {
-                    result = _resultService.GetResult(calcReqDTO.NumberOne, calcReqDTO.NumberTwo,
-                        calcReqDTO.CalculationType);
-                    Thread.Sleep(1000);
-                }
+                    
+                    await _cs.SendCalculationRequestAsync(calcReqDTO);
 
-                if (result != null)
-                {
-                    _context.Results.Add(result);
-                    await _context.SaveChangesAsync();
-                    return Ok(result);
-                }
+                    var timeoutTask = Task.Delay(20000); // 20 seconds timer
 
-                Monitoring.Log.Here().Error("An error occured while trying to GetResult");
-                return BadRequest();
+
+                    Result? result = null;
+                    Monitoring.Log.Here().Information("Going into loop, looking for result");
+                    while (!timeoutTask.IsCompleted && result == null)
+                    {
+                        result = _resultService.GetResult(calcReqDTO.NumberOne, calcReqDTO.NumberTwo,
+                            calcReqDTO.CalculationType);
+                        Thread.Sleep(1000);
+                    }
+
+                    if (result != null)
+                    {
+                        _context.Results.Add(result);
+                        await _context.SaveChangesAsync();
+                        return Ok(result);
+                    }
+
+                    Monitoring.Log.Here().Error("An error occured while trying to GetResult");
+                    return BadRequest();
+                }
             }
-            catch (Exception ex)
+        
+        catch (Exception ex)
             {
                 Monitoring.Log.Here().Error(ex, "An error occurred while creating the calculation");
                 Console.WriteLine(ex.ToString());
@@ -67,10 +77,16 @@ namespace CalculatorService.Controllers
         [HttpGet("GetHistory")]
         public ActionResult GetHistory()
         {
+            Monitoring.Log.Here()
+                .Information(
+                    "Request received for fetching calculation history.");
             try
             {
-                var results = _context.Results.ToList();
-                return Ok(results ?? new List<Result>());
+                using (Monitoring.ActivitySource.StartActivity("Received create calculation request"))
+                {
+                    var results = _context.Results.ToList();
+                    return Ok(results ?? new List<Result>());
+                }
             }
             catch (Exception ex)
             {

@@ -408,6 +408,8 @@ obj/
 /node_modules
 /wwwroot/node_modules
 
+.idea/
+
 ### VisualStudio ###
 
 # User-specific files

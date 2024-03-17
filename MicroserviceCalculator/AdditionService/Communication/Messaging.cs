@@ -46,14 +46,15 @@ namespace AdditionService.Communication
                         message.NumberOne, message.NumberTwo);
 
                 var propagator = new TraceContextPropagator();
-                var parentContext = propagator.Extract(default, message,
-                    (r, key) =>
-                    {
-                        return new List<string>(new[]
-                            { r.Headers.ContainsKey(key) ? r.Headers[key].ToString() : String.Empty }!);
-                    });
+                var parentContext = propagator.Extract(default, message, (r, key) =>
+                {
+                    return new List<string>(new[] { r.Headers.ContainsKey(key) ? r.Headers[key].ToString() : String.Empty }!);
+                });
                 Baggage.Current = parentContext.Baggage;
-
+                
+                using (var activity = MonitoringService.ActivitySource.StartActivity("Received addition task", ActivityKind.Consumer, parentContext.ActivityContext))
+                {
+                    
                 var response = new CalculationResponseDTO();
                 response.CalculationResult = message.NumberOne + message.NumberTwo;
                 response.CalculationType = message.CalculationType;
@@ -63,20 +64,16 @@ namespace AdditionService.Communication
                     .Information(
                         "calculated result for addition of {NumberOne} and {NumberTwo}: result {response}",
                         message.NumberOne, message.NumberTwo, response.CalculationResult);
-
-                using (var activity = MonitoringService.ActivitySource.StartActivity("Received task",
-                           ActivityKind.Consumer, parentContext.ActivityContext))
-                {
-                    var activityContext = activity?.Context ?? Activity.Current?.Context ?? default;
-                    var propagationContext = new PropagationContext(activityContext, Baggage.Current);
-                    propagator.Inject(propagationContext, response.Headers,
-                        (headers, key, value) => headers.Add(key, value));
-                    string topic = "additionResult";
-                    var bus = ConnectionHelper.GetRMQConnection();
-                    MonitoringService.Log.Here()
-                        .Information("publishing result to topic {topic} {response}", topic, response);
-                        bus.PubSub.PublishAsync(response, x => x.WithTopic(topic));
-                        bus.Dispose();
+                
+                var activityContext = activity?.Context ?? Activity.Current?.Context ?? default;
+                var propagationContext = new PropagationContext(activityContext, Baggage.Current);
+                propagator.Inject(propagationContext, response.Headers, (headers, key, value) => headers.Add(key, value));
+                string topic = "additionResult";
+                var bus = ConnectionHelper.GetRMQConnection();
+                MonitoringService.Log.Here()
+                    .Information("publishing result to topic {topic} {response}", topic, response);
+                    bus.PubSub.PublishAsync(response, x => x.WithTopic(topic));
+                    bus.Dispose();
                 }
             }
             catch (Exception ex)

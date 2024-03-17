@@ -31,7 +31,7 @@
     {
 
         var client = new HttpClient();
-        var requestmessage = new HttpRequestMessage(HttpMethod.Get, "http://172.20.0.1:9090/calculator/GetHistory");
+        var requestmessage = new HttpRequestMessage(HttpMethod.Get, "http://172.18.0.1:9090/calculator/GetHistory");
         var response = await client.SendAsync(requestmessage);
         var respContent = await response.Content.ReadAsStringAsync();
         try
@@ -53,7 +53,7 @@
         calcdto.CalculationType = CalculationType.Addition;
 
         var client = new HttpClient();
-        var requestmessage = new HttpRequestMessage(HttpMethod.Post, "http://172.20.0.1:9090/calculator/createcalculation");
+        var requestmessage = new HttpRequestMessage(HttpMethod.Post, "http://172.18.0.1:9090/calculator/createcalculation");
         requestmessage.Content = new StringContent(JsonSerializer.Serialize(calcdto), Encoding.UTF8, "application/json");
         var response = await client.SendAsync(requestmessage);
         var respContent = await response.Content.ReadAsStringAsync();
@@ -77,7 +77,7 @@
         calcdto.CalculationType = CalculationType.Subtraction;
 
         var client = new HttpClient();
-        var requestmessage = new HttpRequestMessage(HttpMethod.Post, "http://172.20.0.1:9090/calculator/createcalculation");
+        var requestmessage = new HttpRequestMessage(HttpMethod.Post, "http://172.18.0.1:9090/calculator/createcalculation");
         requestmessage.Content = new StringContent(JsonSerializer.Serialize(calcdto), Encoding.UTF8, "application/json");
         var response = await client.SendAsync(requestmessage);
         var respContent = await response.Content.ReadAsStringAsync();
