@@ -29,13 +29,13 @@
 
     public async Task GetResults()
     {
-
+        try
+        {
         var client = new HttpClient();
         var requestmessage = new HttpRequestMessage(HttpMethod.Get, "http://172.18.0.1:9090/calculator/GetHistory");
         var response = await client.SendAsync(requestmessage);
         var respContent = await response.Content.ReadAsStringAsync();
-        try
-        {
+        
             fetchedResults = JsonSerializer.Deserialize<List<Result>>(respContent);
         }
         catch (Exception ex)
@@ -55,10 +55,12 @@
         var client = new HttpClient();
         var requestmessage = new HttpRequestMessage(HttpMethod.Post, "http://172.18.0.1:9090/calculator/createcalculation");
         requestmessage.Content = new StringContent(JsonSerializer.Serialize(calcdto), Encoding.UTF8, "application/json");
+        try
+        {
         var response = await client.SendAsync(requestmessage);
         var respContent = await response.Content.ReadAsStringAsync();
         Console.WriteLine(respContent);
-        try{
+     
             
             var result = JsonSerializer.Deserialize<Result>(respContent);
             results.Add(result);
@@ -79,17 +81,18 @@
         var client = new HttpClient();
         var requestmessage = new HttpRequestMessage(HttpMethod.Post, "http://172.18.0.1:9090/calculator/createcalculation");
         requestmessage.Content = new StringContent(JsonSerializer.Serialize(calcdto), Encoding.UTF8, "application/json");
+        try
+        {
         var response = await client.SendAsync(requestmessage);
         var respContent = await response.Content.ReadAsStringAsync();
-        try 
-        {
+        
 
             var result = JsonSerializer.Deserialize<Result>(respContent);
             results.Add(result);
         }
-        catch
+        catch(Exception ex) 
         {
-            Console.WriteLine($"LOG DIS = {respContent}");
+            Console.WriteLine($"LOG DIS = {ex.ToString()}");
         }
     }
 }
